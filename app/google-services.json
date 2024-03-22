@@ -1,0 +1,29 @@
+{
+	"project_info": {
+	  "project_number": "551530242796",
+	  "project_id": "trytolie-4a461",
+	  "storage_bucket": "trytolie-4a461.appspot.com"
+	},
+	"client": [
+	  {
+		"client_info": {
+		  "mobilesdk_app_id": "1:551530242796:android:c6239f1533c4befadd7bc9",
+		  "android_client_info": {
+			"package_name": "com.example.trytolie"
+		  }
+		},
+		"oauth_client": [],
+		"api_key": [
+		  {
+			"current_key": "AIzaSyCHZdrJxGAHzbNdDhqkqtETxW3-oBrotdA"
+		  }
+		],
+		"services": {
+		  "appinvite_service": {
+			"other_platform_oauth_client": []
+		  }
+		}
+	  }
+	],
+	"configuration_version": "1"
+  }
