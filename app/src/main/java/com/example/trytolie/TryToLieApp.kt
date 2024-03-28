@@ -39,6 +39,7 @@ import com.example.trytolie.ui.navigation.TryToLieNavigationRail
 import com.example.trytolie.ui.navigation.TryToLieRoute
 import com.example.trytolie.ui.navigation.TryToLieTopLevelDestination
 import com.example.trytolie.ui.pages.SignInScreen
+import com.example.trytolie.ui.pages.SignUpScreen
 import com.example.trytolie.ui.utils.DevicePosture
 import com.example.trytolie.ui.utils.TryToLieNavigationContentPosition
 import com.example.trytolie.ui.utils.TryToLieNavigationType
@@ -277,7 +278,13 @@ private fun TryToLieNavHost(
                 )
             }
             composable(TryToLieRoute.SIGN_UP) {
-/*                SignUpScreen()*/
+                SignUpScreen(
+                    state = authState,
+                    modifier = modifier,
+                    authHandler = authHandler,
+                    authViewModel = authViewModel,
+                    context = context
+                )
             }
             composable(TryToLieRoute.CONTACT) {
  /*               ContactUsScreen()*/

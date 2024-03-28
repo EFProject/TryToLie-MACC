@@ -91,133 +91,134 @@ fun SignInScreen(
     )
     val keyboard = LocalSoftwareKeyboardController.current
 
-        Column(
-            modifier = modifier
-                .fillMaxSize()
-                .verticalScroll(scroll),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            EmailFieldComponent(
-                email = email,
-                onEmailValueChange = { newValue ->
-                    email = newValue
-                    state.signInError = null
-                },
-                errors = state.signInError
-            )
-            Spacer(modifier = Modifier.size(8.dp))
-            PasswordFieldComponent(
-                password = password,
-                onPasswordValueChange = { newValue ->
-                    password = newValue
-                    state.signInError = null
-                },
-                error = state.signInError
-            )
-            Spacer(modifier = Modifier.size(8.dp))
-            Button(
-                onClick = {
-                    keyboard?.hide()
-                    if(email.text == "") {
-                        state.signInError = "Email is needed"
-                        state.fieldType = "Email"
-                        return@Button
-                    }
-                    if (password.text == "") {
-                        state.signInError = "Password is needed"
-                        state.fieldType = "Password"
-                        return@Button
-                    }
-
-                    authViewModel!!.viewModelScope.launch {
-                        val signInResult = authHandler?.firebaseSignInWithEmailAndPassword(
-                            email.text,
-                            password.text
-                        )
-                        authViewModel.onSignInResult(
-                            signInResult!!,
-                            context!!
-                        )
-                    }
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .verticalScroll(scroll),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        EmailFieldComponent(
+            email = email,
+            onEmailValueChange = { newValue ->
+                email = newValue
+                state.signInError = null
+            },
+            errors = state.signInError
+        )
+        Spacer(modifier = Modifier.size(8.dp))
+        PasswordFieldComponent(
+            password = password,
+            label = "Password",
+            onPasswordValueChange = { newValue ->
+                password = newValue
+                state.signInError = null
+            },
+            error = state.signInError
+        )
+        Spacer(modifier = Modifier.size(8.dp))
+        Button(
+            onClick = {
+                keyboard?.hide()
+                if(email.text == "") {
+                    state.signInError = "Email is needed"
+                    state.fieldType = "Email"
+                    return@Button
                 }
-            ) {
-                Icon(
-                    imageVector = Icons.Default.AccountCircle,
-                    modifier = Modifier.size(16.dp),
-                    contentDescription = "AccountCircle icon"
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(text = "Login")
-            }
-            Spacer(modifier = Modifier.size(8.dp))
-            Button(onClick = {
-                authViewModel?.signInAsGuest()
-            }
-            ) {
-                Icon(
-                    imageVector = Icons.Default.NoAccounts,
-                    modifier = Modifier.size(16.dp),
-                    contentDescription = "Guest icon"
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(text = "Login as Guest")
-            }
-            Spacer(modifier = Modifier.size(8.dp))
-            Button(onClick = {
+                if (password.text == "") {
+                    state.signInError = "Password is needed"
+                    state.fieldType = "Password"
+                    return@Button
+                }
+
                 authViewModel!!.viewModelScope.launch {
-                    val signInIntentSender =
-                        authHandler!!.signIn()
-                    googleIntentLaucher!!.launch(
-                        IntentSenderRequest.Builder(
-                            signInIntentSender
-                                ?: return@launch
-                        ).build()
-                    )}}
-            ) {
-                Icon(
-                    painterResource(id = R.drawable.ic_google),
-                    modifier = Modifier.size(16.dp),
-                    contentDescription = "Google icon"
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(text = "Sign in")
+                    val signInResult = authHandler?.firebaseSignInWithEmailAndPassword(
+                        email.text,
+                        password.text
+                    )
+                    authViewModel.onSignInResult(
+                        signInResult!!,
+                        context!!
+                    )
+                }
             }
-            Spacer(modifier = Modifier.size(8.dp))
-            Text(
-                modifier = Modifier.clickable {
-                    navController?.navigate(TryToLieRoute.CONTACT) {
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
-                        }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
-                },
-                text = "Have you forgotten your password?",
-                style = MaterialTheme.typography.bodySmall,
-                textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.outline,
-                fontSize = 15.sp
+        ) {
+            Icon(
+                imageVector = Icons.Default.AccountCircle,
+                modifier = Modifier.size(16.dp),
+                contentDescription = "AccountCircle icon"
             )
-            Spacer(modifier = Modifier.size(8.dp))
-            Text(
-                modifier = Modifier.clickable {
-                    navController?.navigate(TryToLieRoute.SIGN_UP) {
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
-                        }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
-                },
-                text = "Do you want Sign Up?",
-                style = MaterialTheme.typography.bodySmall,
-                textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.outline,
-                fontSize = 15.sp
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(text = "Login")
+        }
+        Spacer(modifier = Modifier.size(8.dp))
+        Button(onClick = {
+            authViewModel?.signInAsGuest()
+        }
+        ) {
+            Icon(
+                imageVector = Icons.Default.NoAccounts,
+                modifier = Modifier.size(16.dp),
+                contentDescription = "Guest icon"
             )
-            Spacer(modifier = Modifier.size(8.dp))
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(text = "Login as Guest")
+        }
+        Spacer(modifier = Modifier.size(8.dp))
+        Button(onClick = {
+            authViewModel!!.viewModelScope.launch {
+                val signInIntentSender =
+                    authHandler!!.signIn()
+                googleIntentLaucher!!.launch(
+                    IntentSenderRequest.Builder(
+                        signInIntentSender
+                            ?: return@launch
+                    ).build()
+                )}}
+        ) {
+            Icon(
+                painterResource(id = R.drawable.ic_google),
+                modifier = Modifier.size(16.dp),
+                contentDescription = "Google icon"
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(text = "Sign in with Google")
+        }
+        Spacer(modifier = Modifier.size(8.dp))
+        Text(
+            modifier = Modifier.clickable {
+                navController?.navigate(TryToLieRoute.CONTACT) {
+                    popUpTo(navController.graph.findStartDestination().id) {
+                        saveState = true
+                    }
+                    launchSingleTop = true
+                    restoreState = true
+                }
+            },
+            text = "Have you forgotten your password?",
+            style = MaterialTheme.typography.bodySmall,
+            textAlign = TextAlign.Center,
+            color = MaterialTheme.colorScheme.outline,
+            fontSize = 15.sp
+        )
+        Spacer(modifier = Modifier.size(8.dp))
+        Text(
+            modifier = Modifier.clickable {
+                navController?.navigate(TryToLieRoute.SIGN_UP) {
+                    popUpTo(navController.graph.findStartDestination().id) {
+                        saveState = true
+                    }
+                    launchSingleTop = true
+                    restoreState = true
+                }
+            },
+            text = "Do you want Sign Up?",
+            style = MaterialTheme.typography.bodySmall,
+            textAlign = TextAlign.Center,
+            color = MaterialTheme.colorScheme.outline,
+            fontSize = 15.sp
+        )
+        Spacer(modifier = Modifier.size(8.dp))
     }
 }
 

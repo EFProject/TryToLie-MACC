@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun PasswordFieldComponent(
     password: TextFieldValue,
+    label: String,
     onPasswordValueChange: (newValue: TextFieldValue) -> Unit,
     error: String? = null,
 ) {
@@ -37,7 +38,7 @@ fun PasswordFieldComponent(
         },
         label = {
             Text(
-                text = "Password"
+                text = label
             )
         },
         singleLine = true,
