@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalNavigationDrawer
-import androidx.compose.material3.Surface
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
@@ -29,17 +28,22 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.window.layout.DisplayFeature
 import androidx.window.layout.FoldingFeature
+import com.example.trytolie.multiplayer.OnlineUIClient
+import com.example.trytolie.multiplayer.OnlineViewModel
 import com.example.trytolie.sign_in.AuthUIClient
 import com.example.trytolie.sign_in.SignInState
 import com.example.trytolie.sign_in.SignInViewModel
+import com.example.trytolie.sign_in.UserData
 import com.example.trytolie.ui.navigation.ModalNavigationDrawerContent
 import com.example.trytolie.ui.navigation.TryToLieBottomNavigationBar
 import com.example.trytolie.ui.navigation.TryToLieNavigationActions
 import com.example.trytolie.ui.navigation.TryToLieNavigationRail
 import com.example.trytolie.ui.navigation.TryToLieRoute
 import com.example.trytolie.ui.navigation.TryToLieTopLevelDestination
+import com.example.trytolie.ui.pages.HomePage
 import com.example.trytolie.ui.pages.SignInScreen
 import com.example.trytolie.ui.pages.SignUpScreen
+import com.example.trytolie.ui.pages.profile.ProfileScreenGuest
 import com.example.trytolie.ui.utils.DevicePosture
 import com.example.trytolie.ui.utils.TryToLieNavigationContentPosition
 import com.example.trytolie.ui.utils.TryToLieNavigationType
@@ -55,9 +59,10 @@ fun TryToLieApp(
     authState: SignInState? = null,
     authHandler: AuthUIClient?,
     authViewModel:  SignInViewModel? = null,
+    onlineViewModel: OnlineViewModel? = null,
     googleIntentLauncher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>? = null,
-    toggleFullView: () -> Unit = {},
-    immersivePage: String? = null,
+    onlineUIClient: OnlineUIClient? = null,
+    userData: UserData? = null,
     context: Context? = null
 ) {
     val navigationType: TryToLieNavigationType
@@ -105,22 +110,19 @@ fun TryToLieApp(
         }
     }
 
-    when (immersivePage) {
-        TryToLieRoute.FIND_GAME -> Surface(color = MaterialTheme.colorScheme.background) {}
-        TryToLieRoute.ONLINE_GAME -> Surface(color = MaterialTheme.colorScheme.background) {}
-        TryToLieRoute.SELECT_COLOR -> Surface(color = MaterialTheme.colorScheme.background) {}
-        else -> TryToLieNavigationWrapper(
-            navigationType = navigationType,
-            navigationContentPosition = navigationContentPosition,
-            isAuthenticated = isAuthenticated,
-            authState = authState,
-            authHandler = authHandler,
-            authViewModel = authViewModel,
-            googleIntentLauncher = googleIntentLauncher,
-            toggleFullView = toggleFullView,
-            context = context
-        )
-    }
+    TryToLieNavigationWrapper(
+        navigationType = navigationType,
+        navigationContentPosition = navigationContentPosition,
+        isAuthenticated = isAuthenticated,
+        authState = authState,
+        authHandler = authHandler,
+        authViewModel = authViewModel,
+        onlineViewModel= onlineViewModel,
+        onlineUIClient = onlineUIClient,
+        googleIntentLauncher = googleIntentLauncher,
+        context = context
+    )
+
 }
 
 @Composable
@@ -131,8 +133,9 @@ private fun TryToLieNavigationWrapper(
     authState: SignInState? = null,
     authHandler: AuthUIClient? = null,
     authViewModel: SignInViewModel? = null,
+    onlineViewModel: OnlineViewModel? = null,
+    onlineUIClient: OnlineUIClient? = null,
     googleIntentLauncher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>? = null,
-    toggleFullView: () -> Unit = {},
     context: Context? = null
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -173,9 +176,10 @@ private fun TryToLieNavigationWrapper(
                 } },
             isAuthenticated = isAuthenticated,
             authViewModel = authViewModel,
+            onlineViewModel= onlineViewModel,
+            onlineUIClient = onlineUIClient,
             authHandler = authHandler,
             googleIntentLauncher = googleIntentLauncher,
-            toggleFullView = toggleFullView,
             context = context
         )
     }
@@ -193,9 +197,10 @@ fun TryToLieAppContent(
     onDrawerClicked: () -> Unit = {},
     isAuthenticated: Boolean,
     authViewModel: SignInViewModel? = null,
+    onlineViewModel: OnlineViewModel? = null,
+    onlineUIClient: OnlineUIClient? = null,
     authHandler: AuthUIClient? = null,
     googleIntentLauncher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>? = null,
-    toggleFullView: () -> Unit = {},
     context: Context? = null
 ) {
     Row(modifier = modifier.fillMaxSize()) {
@@ -220,8 +225,9 @@ fun TryToLieAppContent(
                 isAuthenticated = isAuthenticated,
                 authHandler = authHandler,
                 authViewModel = authViewModel,
+                onlineViewModel = onlineViewModel,
+                onlineUIClient = onlineUIClient,
                 googleIntentLauncher = googleIntentLauncher,
-                toggleFullView = toggleFullView,
                 context = context
             )
             AnimatedVisibility(visible = navigationType == TryToLieNavigationType.BOTTOM_NAVIGATION) {
@@ -243,8 +249,9 @@ private fun TryToLieNavHost(
     isAuthenticated: Boolean,
     authHandler: AuthUIClient? = null,
     authViewModel: SignInViewModel? = null,
+    onlineViewModel: OnlineViewModel? = null,
+    onlineUIClient: OnlineUIClient? = null,
     googleIntentLauncher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>? = null,
-    toggleFullView: () -> Unit = {},
     context: Context? = null
 ) {
     if (isAuthenticated && authViewModel?.isGuest() != true) {
@@ -297,7 +304,17 @@ private fun TryToLieNavHost(
             startDestination = TryToLieRoute.HOME,
         ) {
             composable(TryToLieRoute.HOME) {
-  /*              HomePageGuest()*/
+                HomePage(
+                    modifier = modifier,
+                    onlineViewModel = onlineViewModel!!,
+                    onlineUIClient = onlineUIClient!!
+                )
+            }
+            composable(TryToLieRoute.PROFILE) {
+                ProfileScreenGuest(
+                    modifier= modifier,
+                    authViewModel = authViewModel
+                )
             }
         }
     }

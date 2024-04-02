@@ -17,6 +17,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.example.trytolie.multiplayer.OnlineUIClient
+import com.example.trytolie.multiplayer.OnlineViewModel
 import com.example.trytolie.sign_in.AuthUIClient
 import com.example.trytolie.sign_in.SignInViewModel
 import com.example.trytolie.sign_in.UserAuthStateType
@@ -26,6 +28,8 @@ import com.example.trytolie.ui.theme.TryToLieTheme
 import com.example.trytolie.ui.utils.graphics.CubeRendererOpenGL
 import com.google.accompanist.adaptive.calculateDisplayFeatures
 import com.google.android.gms.auth.api.identity.Identity
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -34,9 +38,10 @@ import org.koin.core.context.GlobalContext.startKoin
 class MainActivity : ComponentActivity() {
 
     private val signInViewModel: SignInViewModel by viewModels()
+    private val onlineViewModel: OnlineViewModel by viewModels()
 
     private var userAuthState =  mutableStateOf(UserAuthStateType.UNDEFINED)
-    // private val db = Firebase.firestore
+    private val db = Firebase.firestore
     private var loadingText = "Setting up the game..."
 
 
@@ -141,7 +146,26 @@ class MainActivity : ComponentActivity() {
                     }
 
                     UserAuthStateType.GUEST -> {
+                        val onlineUIClient by lazy {
+                            OnlineUIClient(
+                                context = applicationContext,
+                                db = db,
+                                userData = userData.data!!,
+                                onlineViewModel = onlineViewModel
+                            )
+                        }
 
+                        TryToLieApp(
+                            windowSize = windowSize,
+                            authState= authState,
+                            displayFeatures = displayFeatures,
+                            authViewModel = signInViewModel,
+                            onlineViewModel = onlineViewModel,
+                            isAuthenticated = true,
+                            authHandler = authUIClient,
+                            onlineUIClient = onlineUIClient,
+                            userData = null,
+                        )
                     }
                 }
             }

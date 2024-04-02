@@ -79,7 +79,7 @@ val LOGIN_LEVEL_DESTINATIONS = listOf(
         route = TryToLieRoute.CONTACT,
         selectedIcon = Icons.Default.Email,
         unselectedIcon = Icons.Outlined.Email,
-        iconTextId = R.string.tab_contacs
+        iconTextId = R.string.tab_contacts
     )
 )
 
