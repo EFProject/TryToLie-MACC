@@ -28,8 +28,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.window.layout.DisplayFeature
 import androidx.window.layout.FoldingFeature
-import com.example.trytolie.multiplayer.OnlineUIClient
 import com.example.trytolie.multiplayer.OnlineViewModel
+import com.example.trytolie.multiplayer.RoomUIClient
 import com.example.trytolie.sign_in.AuthUIClient
 import com.example.trytolie.sign_in.SignInState
 import com.example.trytolie.sign_in.SignInViewModel
@@ -43,6 +43,7 @@ import com.example.trytolie.ui.navigation.TryToLieTopLevelDestination
 import com.example.trytolie.ui.pages.HomePage
 import com.example.trytolie.ui.pages.SignInScreen
 import com.example.trytolie.ui.pages.SignUpScreen
+import com.example.trytolie.ui.pages.multiplayer.FindGameScreen
 import com.example.trytolie.ui.pages.profile.ProfileScreenGuest
 import com.example.trytolie.ui.utils.DevicePosture
 import com.example.trytolie.ui.utils.TryToLieNavigationContentPosition
@@ -61,7 +62,8 @@ fun TryToLieApp(
     authViewModel:  SignInViewModel? = null,
     onlineViewModel: OnlineViewModel? = null,
     googleIntentLauncher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>? = null,
-    onlineUIClient: OnlineUIClient? = null,
+    roomUIClient: RoomUIClient? = null,
+    immersivePage: String? = null,
     userData: UserData? = null,
     context: Context? = null
 ) {
@@ -110,18 +112,27 @@ fun TryToLieApp(
         }
     }
 
-    TryToLieNavigationWrapper(
-        navigationType = navigationType,
-        navigationContentPosition = navigationContentPosition,
-        isAuthenticated = isAuthenticated,
-        authState = authState,
-        authHandler = authHandler,
-        authViewModel = authViewModel,
-        onlineViewModel= onlineViewModel,
-        onlineUIClient = onlineUIClient,
-        googleIntentLauncher = googleIntentLauncher,
-        context = context
-    )
+    when (immersivePage) {
+        TryToLieRoute.FIND_GAME -> FindGameScreen(
+            modifier = Modifier,
+            roomUIClient = roomUIClient!!,
+            onlineViewModel = onlineViewModel!!,
+            userData = userData!!
+        )
+        //TryToLieRoute.ONLINE_GAME ->
+        else -> TryToLieNavigationWrapper(
+            navigationType = navigationType,
+            navigationContentPosition = navigationContentPosition,
+            isAuthenticated = isAuthenticated,
+            authState = authState,
+            authHandler = authHandler,
+            authViewModel = authViewModel,
+            onlineViewModel= onlineViewModel,
+            roomUIClient = roomUIClient,
+            googleIntentLauncher = googleIntentLauncher,
+            context = context
+        )
+    }
 
 }
 
@@ -134,7 +145,7 @@ private fun TryToLieNavigationWrapper(
     authHandler: AuthUIClient? = null,
     authViewModel: SignInViewModel? = null,
     onlineViewModel: OnlineViewModel? = null,
-    onlineUIClient: OnlineUIClient? = null,
+    roomUIClient: RoomUIClient? = null,
     googleIntentLauncher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>? = null,
     context: Context? = null
 ) {
@@ -177,7 +188,7 @@ private fun TryToLieNavigationWrapper(
             isAuthenticated = isAuthenticated,
             authViewModel = authViewModel,
             onlineViewModel= onlineViewModel,
-            onlineUIClient = onlineUIClient,
+            roomUIClient = roomUIClient,
             authHandler = authHandler,
             googleIntentLauncher = googleIntentLauncher,
             context = context
@@ -198,7 +209,7 @@ fun TryToLieAppContent(
     isAuthenticated: Boolean,
     authViewModel: SignInViewModel? = null,
     onlineViewModel: OnlineViewModel? = null,
-    onlineUIClient: OnlineUIClient? = null,
+    roomUIClient: RoomUIClient? = null,
     authHandler: AuthUIClient? = null,
     googleIntentLauncher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>? = null,
     context: Context? = null
@@ -226,7 +237,7 @@ fun TryToLieAppContent(
                 authHandler = authHandler,
                 authViewModel = authViewModel,
                 onlineViewModel = onlineViewModel,
-                onlineUIClient = onlineUIClient,
+                roomUIClient = roomUIClient,
                 googleIntentLauncher = googleIntentLauncher,
                 context = context
             )
@@ -250,7 +261,7 @@ private fun TryToLieNavHost(
     authHandler: AuthUIClient? = null,
     authViewModel: SignInViewModel? = null,
     onlineViewModel: OnlineViewModel? = null,
-    onlineUIClient: OnlineUIClient? = null,
+    roomUIClient: RoomUIClient? = null,
     googleIntentLauncher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>? = null,
     context: Context? = null
 ) {
@@ -307,7 +318,7 @@ private fun TryToLieNavHost(
                 HomePage(
                     modifier = modifier,
                     onlineViewModel = onlineViewModel!!,
-                    onlineUIClient = onlineUIClient!!
+                    roomUIClient = roomUIClient!!
                 )
             }
             composable(TryToLieRoute.PROFILE) {

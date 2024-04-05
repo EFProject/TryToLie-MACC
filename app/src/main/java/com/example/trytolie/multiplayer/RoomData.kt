@@ -1,7 +1,7 @@
 package com.example.trytolie.multiplayer
 
 data class RoomData(
-    val roomId: String = "-1",
+    var roomId: String = "-1",
     val playerOneId: String = "",
     val playerTwoId: String? = null,
     val playerOneName: String = "",
@@ -20,9 +20,11 @@ data class RoomData(
 }
 
 enum class RoomStatus {
-    WAITING,
-    IN_PROGRESS,
-    FINISHED
+    CREATED,                //handle creation of a room
+    WAITING,                //handle FindGameScreen
+    JOINED,                 //handle room is ready for start the game
+    IN_PROGRESS,            //handle game development
+    FINISHED                //handle game termination
 }
 
 enum class GameType {

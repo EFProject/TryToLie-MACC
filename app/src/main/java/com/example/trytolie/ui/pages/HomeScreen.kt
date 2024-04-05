@@ -31,9 +31,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.trytolie.R
-import com.example.trytolie.multiplayer.OnlineUIClient
 import com.example.trytolie.multiplayer.OnlineViewModel
+import com.example.trytolie.multiplayer.RoomUIClient
 import com.example.trytolie.sign_in.UserData
+import com.example.trytolie.ui.navigation.TryToLieRoute
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
 
@@ -42,7 +43,7 @@ import kotlinx.coroutines.launch
 fun HomePage(
     modifier: Modifier = Modifier,
     onlineViewModel: OnlineViewModel,
-    onlineUIClient: OnlineUIClient,
+    roomUIClient: RoomUIClient,
 ) {
     val scroll = rememberScrollState(0)
     val localContext = LocalContext.current
@@ -71,12 +72,7 @@ fun HomePage(
         Button(
             onClick = {
                 lifeScope.launch {
-                    val room = onlineUIClient.getRoom()
-                    if (room != null) {
-                        onlineViewModel.setRoomData(room)
-                    } else {
-                        //onlineViewModel.setFullViewPage(TryToLie.FIND_GAME)
-                    }
+                    onlineViewModel.setFullViewPage(TryToLieRoute.FIND_GAME)
                 }
             },
             modifier = Modifier
@@ -95,11 +91,10 @@ fun HomePage(
         Button(
             onClick = {
                 lifeScope.launch {
-                    val room = onlineUIClient.getRoom()
+                    val room = roomUIClient.getRoom()
                     if (room != null) {
-                        onlineViewModel.setRoomData(room)
-                        //onlineViewModel.setFullViewPage(TryToLieRoute.ONLINE_GAME)
-                        //toggleFullView()
+                        //onlineViewModel.setRoomData(room)
+                        onlineViewModel.setFullViewPage(TryToLieRoute.ONLINE_GAME)
                     } else {
                         Toast.makeText(
                             localContext,
@@ -127,7 +122,7 @@ fun HomePage(
 @Preview
 @Composable
 fun HomePagePreview() {
-    HomePage(onlineViewModel = OnlineViewModel(), onlineUIClient = OnlineUIClient(context = LocalContext.current,
+    HomePage(onlineViewModel = OnlineViewModel(), roomUIClient = RoomUIClient(context = LocalContext.current,
         db = FirebaseFirestore.getInstance(), onlineViewModel = OnlineViewModel(), userData =  UserData()
     ))
 }

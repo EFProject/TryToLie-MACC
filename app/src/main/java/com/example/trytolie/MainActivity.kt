@@ -11,13 +11,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.example.trytolie.multiplayer.OnlineUIClient
+import com.example.trytolie.multiplayer.RoomUIClient
 import com.example.trytolie.multiplayer.OnlineViewModel
 import com.example.trytolie.sign_in.AuthUIClient
 import com.example.trytolie.sign_in.SignInViewModel
@@ -75,7 +76,8 @@ class MainActivity : ComponentActivity() {
         //handle asynchronous tasks - observer to monitor the authentication state
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                signInViewModel.getAuthenticationState(handler = authUIClient).run {
+                if(userAuthState.value != UserAuthStateType.UNDEFINED)
+                    signInViewModel.getAuthenticationState(handler = authUIClient).run {
                     signInViewModel.isAuthenticated.collect {  userAuthState.value = it.state }
                 }
             }
@@ -146,8 +148,9 @@ class MainActivity : ComponentActivity() {
                     }
 
                     UserAuthStateType.GUEST -> {
-                        val onlineUIClient by lazy {
-                            OnlineUIClient(
+                        val immersivePage by onlineViewModel.fullViewPage.collectAsState()
+                        val roomUIClient by lazy {
+                            RoomUIClient(
                                 context = applicationContext,
                                 db = db,
                                 userData = userData.data!!,
@@ -163,8 +166,9 @@ class MainActivity : ComponentActivity() {
                             onlineViewModel = onlineViewModel,
                             isAuthenticated = true,
                             authHandler = authUIClient,
-                            onlineUIClient = onlineUIClient,
-                            userData = null,
+                            roomUIClient = roomUIClient,
+                            userData = userData.data!!,
+                            immersivePage = immersivePage,
                         )
                     }
                 }

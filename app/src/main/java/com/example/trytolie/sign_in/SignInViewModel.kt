@@ -46,8 +46,11 @@ class SignInViewModel: ViewModel() {
 
     fun getAuthenticationState(handler: AuthUIClient) {
         viewModelScope.launch {
-            val userData = handler.getSignedInUser()
-            if (userData != null) {
+            var userData: UserData? = null
+            if(!isGuest() && getUserData() != null) {
+                userData = handler.getSignedInUser()
+            }
+            if (userData != null && !isGuest()) {
                 _isAuthenticated.value = UserAuthState( state = UserAuthStateType.AUTHENTICATED,loading = false)
                 _userData.value = SignInResult(data = userData, errorMessage = null)
                 _signInState.value = SignInState(
@@ -74,10 +77,10 @@ class SignInViewModel: ViewModel() {
 
     fun signInAsGuest() {
         viewModelScope.launch {
-            _signInState.update { it.copy(
-                isSignInSuccessful = true ,
+            _signInState.value = SignInState(
+                isSignInSuccessful = true,
                 signInError = null
-            ) }
+            )
             _isAuthenticated.value = UserAuthState(state = UserAuthStateType.GUEST, loading = false)
             _userData.value = SignInResult(data = guestData , errorMessage = null)
         }
