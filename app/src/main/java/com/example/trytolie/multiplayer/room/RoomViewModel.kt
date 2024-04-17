@@ -1,4 +1,4 @@
-package com.example.trytolie.multiplayer
+package com.example.trytolie.multiplayer.room
 
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class OnlineViewModel: ViewModel() {
+class RoomViewModel: ViewModel() {
     private val _fullViewPage = MutableStateFlow("")
     val fullViewPage = _fullViewPage.asStateFlow()
 

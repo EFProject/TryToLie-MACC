@@ -35,10 +35,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.example.trytolie.R
-import com.example.trytolie.multiplayer.OnlineViewModel
-import com.example.trytolie.multiplayer.RoomData
-import com.example.trytolie.multiplayer.RoomStatus
-import com.example.trytolie.multiplayer.RoomUIClient
+import com.example.trytolie.multiplayer.game.GameUIClient
+import com.example.trytolie.multiplayer.game.GameViewModel
+import com.example.trytolie.multiplayer.room.RoomData
+import com.example.trytolie.multiplayer.room.RoomStatus
+import com.example.trytolie.multiplayer.room.RoomUIClient
+import com.example.trytolie.multiplayer.room.RoomViewModel
 import com.example.trytolie.sign_in.UserData
 import com.example.trytolie.ui.components.CardProfileSearch
 import com.example.trytolie.ui.navigation.TryToLieRoute
@@ -48,28 +50,48 @@ import kotlinx.coroutines.launch
 fun FindGameScreen(
     modifier: Modifier = Modifier,
     roomUIClient: RoomUIClient,
-    onlineViewModel: OnlineViewModel,
+    roomViewModel: RoomViewModel,
+    gameUIClient: GameUIClient,
+    gameViewModel: GameViewModel,
     userData: UserData
 ) {
 
-    val roomData by onlineViewModel.roomData.collectAsState()
+    val roomData by roomViewModel.roomData.collectAsState()
     val lifeScope = rememberCoroutineScope()
     var hostingRoom by remember { mutableStateOf(false) }
+    var creatingRoom by remember { mutableStateOf(false) }
     var findingRoom by remember { mutableStateOf(false) }
     var deletingRoom by remember { mutableStateOf(false) }
+    var creatingGame by remember { mutableStateOf(false) }
+    var settingGame by remember { mutableStateOf(false) }
     val painter = rememberAsyncImagePainter(R.drawable.trytolie_logo)
 
-    LaunchedEffect(hostingRoom,findingRoom,deletingRoom) {
+    LaunchedEffect(creatingRoom,findingRoom,deletingRoom,creatingGame,settingGame) {
         when {
             deletingRoom -> {
                 lifeScope.launch {
                     roomUIClient.deleteRoom(roomData)
+                    roomViewModel.setRoomData(RoomData())
                     deletingRoom = false
                 }
             }
-            hostingRoom -> {
+            creatingGame -> {
+                lifeScope.launch {
+                    gameUIClient.createGame(roomViewModel.getRoomData())
+                    creatingGame = false
+                }
+            }
+            settingGame -> {
+                lifeScope.launch {
+                    gameUIClient.getGame(roomViewModel.getRoomData().gameId)
+                    settingGame = false
+                    roomViewModel.setFullViewPage(TryToLieRoute.ONLINE_GAME)
+                }
+            }
+            creatingRoom -> {
                 lifeScope.launch {
                     roomUIClient.createRoom()
+                    creatingRoom = false
                 }
             }
             findingRoom -> {
@@ -96,7 +118,7 @@ fun FindGameScreen(
             CardProfileSearch(userData = userData,modifier=modifier, painter = painter)
         }
         Spacer(modifier = Modifier.height(20.dp))
-        when(roomData.gameState) {
+        when(roomData.roomState) {
             RoomStatus.WAITING -> {
                 Button(
                     onClick = { findingRoom = true }) {
@@ -110,7 +132,10 @@ fun FindGameScreen(
                 }
                 Spacer(modifier = Modifier.height(10.dp))
                 Button(
-                    onClick = { hostingRoom = true }) {
+                    onClick = {
+                        hostingRoom = true
+                        creatingRoom = true
+                    }) {
                     Icon(
                         imageVector = Icons.Default.Create,
                         modifier = Modifier.size(16.dp),
@@ -122,8 +147,8 @@ fun FindGameScreen(
                 Spacer(modifier = Modifier.height(10.dp))
                 Button(
                     onClick = {
-                        onlineViewModel.setFullViewPage("")
-                        onlineViewModel.setRoomData(RoomData())
+                        roomViewModel.setFullViewPage("")
+                        roomViewModel.setRoomData(RoomData())
                     },
                     colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.secondary)) {
                     Icon(
@@ -158,7 +183,6 @@ fun FindGameScreen(
             }
             RoomStatus.JOINED -> {
                 val painterTwo = rememberAsyncImagePainter(R.drawable.trytolie_logo)
-
                 Text(
                     "VS",
                     style = MaterialTheme.typography.headlineMedium,
@@ -170,7 +194,7 @@ fun FindGameScreen(
                 if(hostingRoom){
                     Button(
                         onClick = {
-                            roomUIClient.updateRoomGameState(RoomStatus.IN_PROGRESS)
+                            creatingGame = true
                         },
                         colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary)) {
                         Text(text = "Start Game", color = MaterialTheme.colorScheme.onPrimary)
@@ -192,7 +216,7 @@ fun FindGameScreen(
                 }
             }
             RoomStatus.IN_PROGRESS -> {
-                onlineViewModel.setFullViewPage(TryToLieRoute.ONLINE_GAME)
+                settingGame = true
             }
             RoomStatus.FINISHED -> {
                 deletingRoom = true

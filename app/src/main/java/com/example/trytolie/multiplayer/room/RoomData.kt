@@ -1,22 +1,18 @@
-package com.example.trytolie.multiplayer
+package com.example.trytolie.multiplayer.room
 
 data class RoomData(
     var roomId: String = "-1",
+    var gameId: String = "-1",
     val playerOneId: String = "",
     val playerTwoId: String? = null,
     val playerOneName: String = "",
     val playerTwoName: String? = null,
     val pictureUrlOne : String = "",
     val pictureUrlTwo : String? = null,
-    val gameState: RoomStatus = RoomStatus.WAITING,
-    val diceNumber: Int = 0,
-    val playerOneDice: Int = 0,
-    val playerTwoDice: Int = 0,
-    val currentTurn: String? = null,
-    val winner: String = "",
+    val roomState: RoomStatus = RoomStatus.WAITING,
 )
 {
-    constructor() : this("-1", "", null,"",null,"",null,RoomStatus.WAITING,0,0,0,null,"")
+    constructor() : this("-1","-1", "", null,"",null,"",null, RoomStatus.WAITING)
 }
 
 enum class RoomStatus {
@@ -25,10 +21,4 @@ enum class RoomStatus {
     JOINED,                 //handle room is ready for start the game
     IN_PROGRESS,            //handle game development
     FINISHED                //handle game termination
-}
-
-enum class GameType {
-    ONLINE,
-    TWO_OFFLINE,
-    ONE_OFFLINE
 }

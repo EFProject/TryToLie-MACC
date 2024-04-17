@@ -18,8 +18,10 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.example.trytolie.multiplayer.RoomUIClient
-import com.example.trytolie.multiplayer.OnlineViewModel
+import com.example.trytolie.multiplayer.game.GameUIClient
+import com.example.trytolie.multiplayer.game.GameViewModel
+import com.example.trytolie.multiplayer.room.RoomUIClient
+import com.example.trytolie.multiplayer.room.RoomViewModel
 import com.example.trytolie.sign_in.AuthUIClient
 import com.example.trytolie.sign_in.SignInViewModel
 import com.example.trytolie.sign_in.UserAuthStateType
@@ -39,7 +41,8 @@ import org.koin.core.context.GlobalContext.startKoin
 class MainActivity : ComponentActivity() {
 
     private val signInViewModel: SignInViewModel by viewModels()
-    private val onlineViewModel: OnlineViewModel by viewModels()
+    private val roomViewModel: RoomViewModel by viewModels()
+    private val gameViewModel: GameViewModel by viewModels()
 
     private var userAuthState =  mutableStateOf(UserAuthStateType.UNDEFINED)
     private val db = Firebase.firestore
@@ -148,13 +151,21 @@ class MainActivity : ComponentActivity() {
                     }
 
                     UserAuthStateType.GUEST -> {
-                        val immersivePage by onlineViewModel.fullViewPage.collectAsState()
+                        val immersivePage by roomViewModel.fullViewPage.collectAsState()
                         val roomUIClient by lazy {
                             RoomUIClient(
                                 context = applicationContext,
                                 db = db,
                                 userData = userData.data!!,
-                                onlineViewModel = onlineViewModel
+                                roomViewModel = roomViewModel
+                            )
+                        }
+                        val gameUIClient by lazy {
+                            GameUIClient(
+                                context = applicationContext,
+                                db = db,
+                                userData = userData.data!!,
+                                gameViewModel = gameViewModel
                             )
                         }
 
@@ -163,10 +174,12 @@ class MainActivity : ComponentActivity() {
                             authState= authState,
                             displayFeatures = displayFeatures,
                             authViewModel = signInViewModel,
-                            onlineViewModel = onlineViewModel,
+                            roomViewModel = roomViewModel,
+                            gameViewModel = gameViewModel,
                             isAuthenticated = true,
                             authHandler = authUIClient,
                             roomUIClient = roomUIClient,
+                            gameUIClient = gameUIClient,
                             userData = userData.data!!,
                             immersivePage = immersivePage,
                         )

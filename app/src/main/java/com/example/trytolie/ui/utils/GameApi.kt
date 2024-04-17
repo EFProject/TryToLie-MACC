@@ -13,26 +13,26 @@ import retrofit2.http.PUT
 import retrofit2.http.Path
 
 
-interface RoomAPI {
-    @GET("/api/v1/room/{id}")
+interface GameAPI {
+    @GET("/api/v1/game/{id}")
     suspend fun get(@Header("Authorization") token: String, @Path("id") id: String): retrofit2.Response<JsonObject>
 
-    @POST("/api/v1/room")
-    suspend fun create(@Header("Authorization") token: String, @Body body: String): retrofit2.Response<JsonObject>
+    @POST("/api/v1/game/{id}")
+    suspend fun create(@Header("Authorization") token: String, @Path("id") id: String): retrofit2.Response<JsonObject>
 
-    @PUT("/api/v1/room")
-    suspend fun getFreeRoom(@Header("Authorization") token: String, @Body body: String): retrofit2.Response<JsonObject>
+    @PUT("/api/v1/game/{id}")
+    suspend fun update(@Header("Authorization") token: String, @Path("id") id: String, @Body body: String): retrofit2.Response<JsonObject>
 
-    @DELETE("/api/v1/room/{id}")
+    @DELETE("/api/v1/game/{id}")
     suspend fun delete(@Header("Authorization") token: String, @Path("id") id: String): retrofit2.Response<JsonObject>
 }
 
 
-object HelperRoomAPI {
-    fun getInstance() : RoomAPI {
+object HelperGameAPI {
+    fun getInstance() : GameAPI {
         return Retrofit.Builder()
             .baseUrl(BuildConfig.API_URL)
             .addConverterFactory(GsonConverterFactory.create())
-            .build().create(RoomAPI::class.java)
+            .build().create(GameAPI::class.java)
     }
 }

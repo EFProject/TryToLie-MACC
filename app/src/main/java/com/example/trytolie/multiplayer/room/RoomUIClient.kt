@@ -1,4 +1,4 @@
-package com.example.trytolie.multiplayer
+package com.example.trytolie.multiplayer.room
 
 import android.content.Context
 import android.util.Log
@@ -19,7 +19,7 @@ import kotlin.coroutines.cancellation.CancellationException
 class RoomUIClient(
     private val context: Context,
     db : FirebaseFirestore,
-    private val onlineViewModel: OnlineViewModel,
+    private val roomViewModel: RoomViewModel,
     private val userData : UserData
 ) {
     private val roomRemoteService : RoomAPI = HelperRoomAPI.getInstance()
@@ -31,12 +31,12 @@ class RoomUIClient(
 
 
     private fun fetchRoomData() {
-        onlineViewModel.roomData.value.apply {
+        roomViewModel.roomData.value.apply {
             if (roomId != "-1") {
                 stopListeningToRoomData()
                 roomDataListener = dbRooms.document(roomId).addSnapshotListener { value, e ->
                     if (e != null) {
-                        Log.w("Game fetch", "Listen failed.", e)
+                        Log.w("Room fetch", "Listen failed.", e)
                         return@addSnapshotListener
                     }
 
@@ -47,11 +47,11 @@ class RoomUIClient(
                     }
 
                     if (value != null && value.exists()) {
-                        Log.d("Game fetch", "$source data: ${value.data}")
+                        Log.d("Room fetch", "$source data: ${value.data}")
                         val model = value.toObject(RoomData::class.java)!!
-                        onlineViewModel.setRoomData(model)
+                        roomViewModel.setRoomData(model)
                     } else {
-                        Log.d("Game fetch","$source data: null")
+                        Log.d("Room fetch","$source data: null")
                     }
                 }
             }
@@ -60,14 +60,14 @@ class RoomUIClient(
 
     private fun saveRoomData(model : RoomData) {
         Log.d("Game fetch","$model")
-        onlineViewModel.setRoomData(model)
+        roomViewModel.setRoomData(model)
         fetchRoomData()
     }
 
-    fun updateRoomGameState(gameState: RoomStatus) {
+    fun updateRoomState(roomState: RoomStatus) {
         try {
-            val room = onlineViewModel.getRoomData()
-            val updateData = mapOf("gameState" to gameState.toString())
+            val room = roomViewModel.getRoomData()
+            val updateData = mapOf("roomState" to roomState.toString())
             dbRooms.document(room.roomId).update(updateData)
             } catch(e: Exception) {
                 e.printStackTrace()
@@ -75,15 +75,20 @@ class RoomUIClient(
             }
     }
 
-    private fun stopListeningToRoomData() {
+    fun stopListeningToRoomData() {
         roomDataListener?.remove()
     }
 
     suspend fun getRoom() : JsonObject? {
         return try {
-            val roomResponse =  roomRemoteService.get(token=token, id = userData.id)
+            val roomResponse =  roomRemoteService.get(token=token, id = "room_579826a5a3c84c598e23")
             val responseBody = roomResponse.body()
-            responseBody
+            if (roomResponse.isSuccessful) {
+                val roomFreeData = gson.fromJson(responseBody, RoomData::class.java)
+                saveRoomData(roomFreeData)
+            }
+            Log.d("Online Client",responseBody.toString())
+            return roomResponse.body()
         } catch(e: Exception) {
             e.printStackTrace()
             if(e is CancellationException) throw e
@@ -96,7 +101,7 @@ class RoomUIClient(
             val roomDataFind = RoomData(
                 playerTwoId = userData.id,
                 playerTwoName = userData.name!!,
-                gameState = RoomStatus.JOINED,
+                roomState = RoomStatus.JOINED,
             )
             val data = gson.toJson(roomDataFind)
             val roomResponse = roomRemoteService.getFreeRoom(token = token, body = data)
@@ -125,7 +130,7 @@ class RoomUIClient(
             val roomDataCreate = RoomData(
                 playerOneId = userData.id,
                 playerOneName = userData.name!!,
-                gameState = RoomStatus.CREATED,
+                roomState = RoomStatus.CREATED,
             )
             val data = gson.toJson(roomDataCreate)
             val roomResponse = roomRemoteService.create(token = token, body = data)
@@ -153,7 +158,7 @@ class RoomUIClient(
     suspend fun deleteRoom(model: RoomData)  {
         stopListeningToRoomData()
         roomRemoteService.delete(token=token, id = model.roomId)
-        onlineViewModel.setRoomData(RoomData())
+        roomViewModel.setRoomData(RoomData())
     }
 
 }

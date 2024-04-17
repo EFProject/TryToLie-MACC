@@ -31,8 +31,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.trytolie.R
-import com.example.trytolie.multiplayer.OnlineViewModel
-import com.example.trytolie.multiplayer.RoomUIClient
+import com.example.trytolie.multiplayer.room.RoomUIClient
+import com.example.trytolie.multiplayer.room.RoomViewModel
 import com.example.trytolie.sign_in.UserData
 import com.example.trytolie.ui.navigation.TryToLieRoute
 import com.google.firebase.firestore.FirebaseFirestore
@@ -42,7 +42,7 @@ import kotlinx.coroutines.launch
 
 fun HomePage(
     modifier: Modifier = Modifier,
-    onlineViewModel: OnlineViewModel,
+    roomViewModel: RoomViewModel,
     roomUIClient: RoomUIClient,
 ) {
     val scroll = rememberScrollState(0)
@@ -72,7 +72,7 @@ fun HomePage(
         Button(
             onClick = {
                 lifeScope.launch {
-                    onlineViewModel.setFullViewPage(TryToLieRoute.FIND_GAME)
+                    roomViewModel.setFullViewPage(TryToLieRoute.FIND_GAME)
                 }
             },
             modifier = Modifier
@@ -93,8 +93,7 @@ fun HomePage(
                 lifeScope.launch {
                     val room = roomUIClient.getRoom()
                     if (room != null) {
-                        //onlineViewModel.setRoomData(room)
-                        onlineViewModel.setFullViewPage(TryToLieRoute.ONLINE_GAME)
+                        roomViewModel.setFullViewPage(TryToLieRoute.ONLINE_GAME)
                     } else {
                         Toast.makeText(
                             localContext,
@@ -122,8 +121,9 @@ fun HomePage(
 @Preview
 @Composable
 fun HomePagePreview() {
-    HomePage(onlineViewModel = OnlineViewModel(), roomUIClient = RoomUIClient(context = LocalContext.current,
-        db = FirebaseFirestore.getInstance(), onlineViewModel = OnlineViewModel(), userData =  UserData()
-    ))
+    HomePage(roomViewModel = RoomViewModel(), roomUIClient = RoomUIClient(context = LocalContext.current,
+        db = FirebaseFirestore.getInstance(), roomViewModel = RoomViewModel(), userData =  UserData()
+    )
+    )
 }
 

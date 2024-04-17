@@ -1,6 +1,7 @@
 package com.example.trytolie
 
 import android.content.Context
+import android.util.Log
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.IntentSenderRequest
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.Surface
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
@@ -28,8 +30,11 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.window.layout.DisplayFeature
 import androidx.window.layout.FoldingFeature
-import com.example.trytolie.multiplayer.OnlineViewModel
-import com.example.trytolie.multiplayer.RoomUIClient
+import com.example.trytolie.game.ui.app.GameOrchestrator
+import com.example.trytolie.multiplayer.game.GameUIClient
+import com.example.trytolie.multiplayer.game.GameViewModel
+import com.example.trytolie.multiplayer.room.RoomUIClient
+import com.example.trytolie.multiplayer.room.RoomViewModel
 import com.example.trytolie.sign_in.AuthUIClient
 import com.example.trytolie.sign_in.SignInState
 import com.example.trytolie.sign_in.SignInViewModel
@@ -60,9 +65,11 @@ fun TryToLieApp(
     authState: SignInState? = null,
     authHandler: AuthUIClient?,
     authViewModel:  SignInViewModel? = null,
-    onlineViewModel: OnlineViewModel? = null,
+    roomViewModel: RoomViewModel? = null,
+    gameViewModel: GameViewModel? = null,
     googleIntentLauncher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>? = null,
     roomUIClient: RoomUIClient? = null,
+    gameUIClient: GameUIClient? = null,
     immersivePage: String? = null,
     userData: UserData? = null,
     context: Context? = null
@@ -115,11 +122,25 @@ fun TryToLieApp(
     when (immersivePage) {
         TryToLieRoute.FIND_GAME -> FindGameScreen(
             modifier = Modifier,
+            gameUIClient = gameUIClient!!,
+            gameViewModel = gameViewModel!!,
             roomUIClient = roomUIClient!!,
-            onlineViewModel = onlineViewModel!!,
+            roomViewModel = roomViewModel!!,
             userData = userData!!
         )
-        //TryToLieRoute.ONLINE_GAME ->
+        TryToLieRoute.ONLINE_GAME -> Surface(color = MaterialTheme.colorScheme.background) {
+            Log.d("ROOM", roomViewModel!!.getRoomData().toString())
+            Log.d("GAME", gameViewModel!!.getGameData().toString())
+            GameOrchestrator(
+                gameViewModel = gameViewModel,
+                roomViewModel = roomViewModel,
+                signInViewModel = authViewModel,
+                gameUIClient = gameUIClient,
+                roomUIClient = roomUIClient,
+                authUIClient = authHandler,
+                userData = userData,
+            )
+        }
         else -> TryToLieNavigationWrapper(
             navigationType = navigationType,
             navigationContentPosition = navigationContentPosition,
@@ -127,7 +148,7 @@ fun TryToLieApp(
             authState = authState,
             authHandler = authHandler,
             authViewModel = authViewModel,
-            onlineViewModel= onlineViewModel,
+            roomViewModel= roomViewModel,
             roomUIClient = roomUIClient,
             googleIntentLauncher = googleIntentLauncher,
             context = context
@@ -144,7 +165,7 @@ private fun TryToLieNavigationWrapper(
     authState: SignInState? = null,
     authHandler: AuthUIClient? = null,
     authViewModel: SignInViewModel? = null,
-    onlineViewModel: OnlineViewModel? = null,
+    roomViewModel: RoomViewModel? = null,
     roomUIClient: RoomUIClient? = null,
     googleIntentLauncher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>? = null,
     context: Context? = null
@@ -187,7 +208,7 @@ private fun TryToLieNavigationWrapper(
                 } },
             isAuthenticated = isAuthenticated,
             authViewModel = authViewModel,
-            onlineViewModel= onlineViewModel,
+            roomViewModel= roomViewModel,
             roomUIClient = roomUIClient,
             authHandler = authHandler,
             googleIntentLauncher = googleIntentLauncher,
@@ -208,7 +229,7 @@ fun TryToLieAppContent(
     onDrawerClicked: () -> Unit = {},
     isAuthenticated: Boolean,
     authViewModel: SignInViewModel? = null,
-    onlineViewModel: OnlineViewModel? = null,
+    roomViewModel: RoomViewModel? = null,
     roomUIClient: RoomUIClient? = null,
     authHandler: AuthUIClient? = null,
     googleIntentLauncher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>? = null,
@@ -236,7 +257,7 @@ fun TryToLieAppContent(
                 isAuthenticated = isAuthenticated,
                 authHandler = authHandler,
                 authViewModel = authViewModel,
-                onlineViewModel = onlineViewModel,
+                roomViewModel = roomViewModel,
                 roomUIClient = roomUIClient,
                 googleIntentLauncher = googleIntentLauncher,
                 context = context
@@ -260,7 +281,7 @@ private fun TryToLieNavHost(
     isAuthenticated: Boolean,
     authHandler: AuthUIClient? = null,
     authViewModel: SignInViewModel? = null,
-    onlineViewModel: OnlineViewModel? = null,
+    roomViewModel: RoomViewModel? = null,
     roomUIClient: RoomUIClient? = null,
     googleIntentLauncher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>? = null,
     context: Context? = null
@@ -317,7 +338,7 @@ private fun TryToLieNavHost(
             composable(TryToLieRoute.HOME) {
                 HomePage(
                     modifier = modifier,
-                    onlineViewModel = onlineViewModel!!,
+                    roomViewModel = roomViewModel!!,
                     roomUIClient = roomUIClient!!
                 )
             }
