@@ -65,18 +65,35 @@ class GameUIClient(
         fetchGameData()
     }
 
-    fun updateGame(gameState: GameStatus) {
+    fun updateGameState(gameState: GameStatus) {
         try {
             val game = gameViewModel.getGameData()
-            val updateData = mapOf("gameState" to gameState.toString())
+            val emptyResults: List<Int> = emptyList()
+            val updateData = mapOf(
+                "gameState" to gameState.toString(),
+                "declarationResults" to emptyResults,
+                "diceResults" to emptyResults
+            )
             dbGames.document(game.gameId).update(updateData)
+        } catch(e: Exception) {
+            e.printStackTrace()
+            if(e is CancellationException) throw e
+        }
+    }
+
+    suspend fun updateGame(model : GameData) {
+        try {
+            val data = gson.toJson(model)
+            val gameResponse = gameRemoteService.update(token = token, id = model.gameId, body = data)
+            val responseBody = gameResponse.body()
+            Log.d("Game Client",responseBody.toString())
             } catch(e: Exception) {
                 e.printStackTrace()
                 if(e is CancellationException) throw e
             }
     }
 
-    fun stopListeningToGameData() {
+    private fun stopListeningToGameData() {
         gameDataListener?.remove()
     }
 
@@ -88,7 +105,7 @@ class GameUIClient(
                 val gameData = gson.fromJson(responseBody, GameData::class.java)
                 saveGameData(gameData)
             }
-            Log.d("Online Client",responseBody.toString())
+            Log.d("Game Client",responseBody.toString())
             return gameResponse.body()
         } catch(e: Exception) {
             e.printStackTrace()
@@ -101,7 +118,7 @@ class GameUIClient(
         return try {
             val gameResponse = gameRemoteService.create(token = token, id = roomData.roomId)
             val responseBody = gameResponse.body()
-            Log.d("Online Client",responseBody.toString())
+            Log.d("Game Client",responseBody.toString())
             return gameResponse.body()
         } catch (e: Exception) {
             e.printStackTrace()

@@ -59,7 +59,7 @@ class RoomUIClient(
     }
 
     private fun saveRoomData(model : RoomData) {
-        Log.d("Game fetch","$model")
+        Log.d("Room fetch","$model")
         roomViewModel.setRoomData(model)
         fetchRoomData()
     }
@@ -79,15 +79,15 @@ class RoomUIClient(
         roomDataListener?.remove()
     }
 
-    suspend fun getRoom() : JsonObject? {
+    suspend fun getRoom(roomId: String): JsonObject? {
         return try {
-            val roomResponse =  roomRemoteService.get(token=token, id = "room_579826a5a3c84c598e23")
+            val roomResponse =  roomRemoteService.get(token=token, id = roomId)
             val responseBody = roomResponse.body()
             if (roomResponse.isSuccessful) {
                 val roomFreeData = gson.fromJson(responseBody, RoomData::class.java)
                 saveRoomData(roomFreeData)
             }
-            Log.d("Online Client",responseBody.toString())
+            Log.d("Room Client",responseBody.toString())
             return roomResponse.body()
         } catch(e: Exception) {
             e.printStackTrace()
@@ -110,7 +110,7 @@ class RoomUIClient(
                 val roomFreeData = gson.fromJson(responseBody, RoomData::class.java)
                 saveRoomData(roomFreeData)
             }
-            Log.d("Online Client",responseBody.toString())
+            Log.d("Room Client",responseBody.toString())
             return roomResponse.body()
         } catch (e: Exception) {
             e.printStackTrace()
@@ -139,7 +139,7 @@ class RoomUIClient(
                 val roomFreeData = gson.fromJson(responseBody, RoomData::class.java)
                 saveRoomData(roomFreeData)
             }
-            Log.d("Online Client",responseBody.toString())
+            Log.d("Room Client",responseBody.toString())
             return roomResponse.body()
         } catch (e: Exception) {
             e.printStackTrace()

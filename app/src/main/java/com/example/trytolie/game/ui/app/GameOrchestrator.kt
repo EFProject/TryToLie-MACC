@@ -29,13 +29,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.example.trytolie.R
 import com.example.trytolie.game.model.game.controller.GameController
-import com.example.trytolie.game.model.game.speechParser.SpeechParser
 import com.example.trytolie.multiplayer.game.GameData
 import com.example.trytolie.multiplayer.game.GameUIClient
 import com.example.trytolie.multiplayer.game.GameViewModel
@@ -45,6 +45,7 @@ import com.example.trytolie.multiplayer.room.RoomViewModel
 import com.example.trytolie.sign_in.AuthUIClient
 import com.example.trytolie.sign_in.SignInViewModel
 import com.example.trytolie.sign_in.UserData
+import com.google.firebase.firestore.FirebaseFirestore
 
 @Composable
 fun GameOrchestrator(
@@ -61,15 +62,6 @@ fun GameOrchestrator(
     val roomData = roomViewModel.roomData.collectAsState()
     val gameData = gameViewModel.gameData.collectAsState()
 
-    val gameController = remember {
-        GameController(
-            roomData = roomData.value,
-            roomUIClient = roomUIClient,
-            gameData = gameData.value,
-            gameUIClient = gameUIClient
-        )
-    }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -81,7 +73,17 @@ fun GameOrchestrator(
         Status(gameData = gameData.value, roomData = roomData.value)
 
         GameControls(
-            showGameMenu = { showGameDialog.value = true }
+            showGameMenu = { showGameDialog.value = true },
+            gameData = gameData.value
+        )
+
+        GameController(
+            modifier = Modifier,
+            roomViewModel = roomViewModel,
+            roomUIClient = roomUIClient!!,
+            gameViewModel = gameViewModel,
+            gameUIClient = gameUIClient!!,
+            userData = userData!!
         )
 
         GameDialogs(
@@ -109,7 +111,7 @@ private fun Status(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(36.dp)
+            .height(50.dp)
             .background(MaterialTheme.colorScheme.primary),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
@@ -125,12 +127,10 @@ private fun Status(
 @Composable
 private fun GameControls(
     showGameMenu: () -> Unit,
+    gameData: GameData,
 ) {
-    var textSpoken by remember { mutableStateOf("") }
-    var canMove by remember { mutableStateOf(false)}
     var alreadySelected by remember { mutableStateOf(false) }
     var showErrorDialog by remember { mutableStateOf(false) }
-    var showAudioDeclaration by remember { mutableStateOf(false) }
 
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -145,34 +145,6 @@ private fun GameControls(
                 tint = MaterialTheme.colorScheme.onPrimary,
                 contentDescription = stringResource(R.string.action_game_menu)
             )
-        }
-    }
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Bottom,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ){
-        if(showAudioDeclaration){
-            ButtonSpeechToText(setSpokenText = {textSpoken = it}, setCanMove = {canMove = it})
-            if (textSpoken != "") {
-
-                val position = SpeechParser.parseSpeechToMove(textSpoken)
-                Text(
-                    modifier = Modifier.padding(top = 8.dp),
-                    text = position?.toString() ?: "Retry",
-                    style = MaterialTheme.typography.bodySmall,
-                    textAlign = TextAlign.Center,
-                    color = MaterialTheme.colorScheme.secondary
-                )
-                if (canMove && position != null) {
-                    canMove = false
-                    if (!alreadySelected) {
-                        //gameController.selectBySpeech(position = position, onFinish = { alreadySelected = it }, onError = {showErrorDialog = true})
-                    } else {
-
-                    }
-                }
-            }
         }
     }
     if(showErrorDialog){
@@ -486,3 +458,26 @@ fun getNewUserData(userData: UserData, results: Int): UserData {
         userData.copy(matchesPlayed = userData.matchesPlayed+1)
     }
 }*/
+
+@Preview
+@Composable
+fun GameOrchestratorPreview() {
+    GameOrchestrator(
+        roomViewModel = RoomViewModel(),
+        roomUIClient = RoomUIClient(
+            context = LocalContext.current,
+            db = FirebaseFirestore.getInstance(),
+            roomViewModel = RoomViewModel(),
+            userData = UserData()
+        ),
+        gameUIClient = GameUIClient(
+            context = LocalContext.current,
+            db = FirebaseFirestore.getInstance(),
+            gameViewModel = GameViewModel(),
+            userData = UserData()
+        ),
+        gameViewModel = GameViewModel(),
+        signInViewModel = SignInViewModel(
+        )
+    )
+}

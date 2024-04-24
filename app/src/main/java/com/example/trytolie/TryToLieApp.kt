@@ -150,6 +150,7 @@ fun TryToLieApp(
             authViewModel = authViewModel,
             roomViewModel= roomViewModel,
             roomUIClient = roomUIClient,
+            gameUIClient = gameUIClient,
             googleIntentLauncher = googleIntentLauncher,
             context = context
         )
@@ -167,6 +168,7 @@ private fun TryToLieNavigationWrapper(
     authViewModel: SignInViewModel? = null,
     roomViewModel: RoomViewModel? = null,
     roomUIClient: RoomUIClient? = null,
+    gameUIClient: GameUIClient? = null,
     googleIntentLauncher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>? = null,
     context: Context? = null
 ) {
@@ -210,6 +212,7 @@ private fun TryToLieNavigationWrapper(
             authViewModel = authViewModel,
             roomViewModel= roomViewModel,
             roomUIClient = roomUIClient,
+            gameUIClient = gameUIClient,
             authHandler = authHandler,
             googleIntentLauncher = googleIntentLauncher,
             context = context
@@ -231,6 +234,7 @@ fun TryToLieAppContent(
     authViewModel: SignInViewModel? = null,
     roomViewModel: RoomViewModel? = null,
     roomUIClient: RoomUIClient? = null,
+    gameUIClient: GameUIClient? = null,
     authHandler: AuthUIClient? = null,
     googleIntentLauncher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>? = null,
     context: Context? = null
@@ -259,6 +263,7 @@ fun TryToLieAppContent(
                 authViewModel = authViewModel,
                 roomViewModel = roomViewModel,
                 roomUIClient = roomUIClient,
+                gameUIClient = gameUIClient,
                 googleIntentLauncher = googleIntentLauncher,
                 context = context
             )
@@ -283,6 +288,7 @@ private fun TryToLieNavHost(
     authViewModel: SignInViewModel? = null,
     roomViewModel: RoomViewModel? = null,
     roomUIClient: RoomUIClient? = null,
+    gameUIClient: GameUIClient? = null,
     googleIntentLauncher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>? = null,
     context: Context? = null
 ) {
@@ -339,7 +345,8 @@ private fun TryToLieNavHost(
                 HomePage(
                     modifier = modifier,
                     roomViewModel = roomViewModel!!,
-                    roomUIClient = roomUIClient!!
+                    roomUIClient = roomUIClient!!,
+                    gameUIClient = gameUIClient!!
                 )
             }
             composable(TryToLieRoute.PROFILE) {

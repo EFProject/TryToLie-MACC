@@ -8,12 +8,14 @@ data class GameData(
     val gameState: GameStatus = GameStatus.DICE_PHASE,
     val playerOneDice: Int = 2,
     val playerTwoDice: Int = 2,
+    var diceResults: List<Int> = emptyList(),
+    var declarationResults: List<Int> = emptyList(),
     val currentTurn: Int = 1,
     val currentPlayer: String? = "",
     val winner: String? = "",
 )
 {
-    constructor() : this("-1", "-1", "", "", GameStatus.DICE_PHASE ,2,2,1,"","")
+    constructor() : this("-1", "-1", "", "", GameStatus.DICE_PHASE ,2,2, emptyList(), emptyList(),1,"","")
 }
 
 enum class GameStatus {

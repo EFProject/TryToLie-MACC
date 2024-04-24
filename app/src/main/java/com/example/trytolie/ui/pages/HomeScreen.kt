@@ -31,6 +31,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.trytolie.R
+import com.example.trytolie.multiplayer.game.GameUIClient
+import com.example.trytolie.multiplayer.game.GameViewModel
 import com.example.trytolie.multiplayer.room.RoomUIClient
 import com.example.trytolie.multiplayer.room.RoomViewModel
 import com.example.trytolie.sign_in.UserData
@@ -44,6 +46,7 @@ fun HomePage(
     modifier: Modifier = Modifier,
     roomViewModel: RoomViewModel,
     roomUIClient: RoomUIClient,
+    gameUIClient: GameUIClient,
 ) {
     val scroll = rememberScrollState(0)
     val localContext = LocalContext.current
@@ -91,8 +94,9 @@ fun HomePage(
         Button(
             onClick = {
                 lifeScope.launch {
-                    val room = roomUIClient.getRoom()
-                    if (room != null) {
+                    val room = roomUIClient.getRoom("room_c31545eea7ba407db336")
+                    val game = gameUIClient.getGame("game_eb042ec82ad44584b590")
+                    if (room != null && game != null) {
                         roomViewModel.setFullViewPage(TryToLieRoute.ONLINE_GAME)
                     } else {
                         Toast.makeText(
@@ -122,8 +126,9 @@ fun HomePage(
 @Composable
 fun HomePagePreview() {
     HomePage(roomViewModel = RoomViewModel(), roomUIClient = RoomUIClient(context = LocalContext.current,
-        db = FirebaseFirestore.getInstance(), roomViewModel = RoomViewModel(), userData =  UserData()
-    )
+        db = FirebaseFirestore.getInstance(), roomViewModel = RoomViewModel(), userData =  UserData()),
+        gameUIClient = GameUIClient(context = LocalContext.current,
+        db = FirebaseFirestore.getInstance(), gameViewModel = GameViewModel(), userData =  UserData())
     )
 }
 
