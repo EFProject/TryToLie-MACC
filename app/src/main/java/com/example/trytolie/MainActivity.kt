@@ -164,7 +164,6 @@ class MainActivity : ComponentActivity() {
                             GameUIClient(
                                 context = applicationContext,
                                 db = db,
-                                userData = userData.data!!,
                                 gameViewModel = gameViewModel
                             )
                         }
