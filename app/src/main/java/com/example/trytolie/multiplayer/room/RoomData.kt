@@ -20,5 +20,5 @@ enum class RoomStatus {
     WAITING,                //handle FindGameScreen
     JOINED,                 //handle room is ready for start the game
     IN_PROGRESS,            //handle game development
-    FINISHED                //handle game termination
+    // FINISHED                //handle game termination
 }

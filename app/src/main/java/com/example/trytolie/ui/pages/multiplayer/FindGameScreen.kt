@@ -70,20 +70,28 @@ fun FindGameScreen(
         when {
             deletingRoom -> {
                 lifeScope.launch {
-                    roomUIClient.deleteRoom(roomData)
-                    roomViewModel.setRoomData(RoomData())
+                    roomUIClient.exitFromRoom()
                     deletingRoom = false
                 }
             }
             creatingGame -> {
                 lifeScope.launch {
-                    gameUIClient.createGame(roomViewModel.getRoomData())
+                    val gameCreated = gameUIClient.createGame(roomViewModel.getRoomData())
+                    if (!gameCreated) {
+                        // TODO Error Message
+                    }
                     creatingGame = false
                 }
             }
             settingGame -> {
                 lifeScope.launch {
                     gameUIClient.getGame(roomViewModel.getRoomData().gameId)
+                    if(hostingRoom){
+                        roomUIClient.deleteRoom(roomViewModel.getRoomData())
+                        hostingRoom = false
+                    } else
+                        roomUIClient.exitFromRoom()
+
                     settingGame = false
                     roomViewModel.setFullViewPage(TryToLieRoute.ONLINE_GAME)
                 }
@@ -217,10 +225,6 @@ fun FindGameScreen(
             }
             RoomStatus.IN_PROGRESS -> {
                 settingGame = true
-            }
-            RoomStatus.FINISHED -> {
-                deletingRoom = true
-                hostingRoom = false
             }
         }
     }

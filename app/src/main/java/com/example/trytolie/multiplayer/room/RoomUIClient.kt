@@ -76,6 +76,7 @@ class RoomUIClient(
     }
 
     fun stopListeningToRoomData() {
+        Log.d("Room Client", "roomDataListener has been closed")
         roomDataListener?.remove()
     }
 
@@ -155,7 +156,12 @@ class RoomUIClient(
     }
 
 
-    suspend fun deleteRoom(model: RoomData)  {
+    fun exitFromRoom()  {
+        stopListeningToRoomData()
+        roomViewModel.setRoomData(RoomData())
+    }
+
+    suspend fun deleteRoom(model : RoomData)  {
         stopListeningToRoomData()
         roomRemoteService.delete(token=token, id = model.roomId)
         roomViewModel.setRoomData(RoomData())

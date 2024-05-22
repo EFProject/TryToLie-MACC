@@ -20,11 +20,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.trytolie.R
 import com.example.trytolie.multiplayer.game.GameData
-import com.example.trytolie.multiplayer.room.RoomData
 import com.example.trytolie.sign_in.UserData
 
 @Composable
-fun GamePlayers(gameData: GameData? = null, roomData: RoomData? = null, userData: UserData? = null) {
+fun GamePlayers(gameData: GameData? = null, userData: UserData? = null) {
 
     Row(
         modifier = Modifier
@@ -41,7 +40,7 @@ fun GamePlayers(gameData: GameData? = null, roomData: RoomData? = null, userData
                 verticalAlignment = Alignment.CenterVertically
             ){
                 Text(
-                    text = roomData?.playerOneName ?: "Player 1",
+                    text = gameData?.playerOneName ?: "Player 1",
                     modifier = Modifier.padding(start = 16.dp),
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
@@ -62,7 +61,7 @@ fun GamePlayers(gameData: GameData? = null, roomData: RoomData? = null, userData
                 horizontalArrangement = Arrangement.Absolute.Right
             ){
                 Text(
-                    text = roomData?.playerTwoName ?: "Player 2",
+                    text = gameData?.playerTwoName ?: "Player 2",
                     modifier = Modifier.padding(start = 16.dp),
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )

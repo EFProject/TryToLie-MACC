@@ -23,6 +23,7 @@
         tools:targetApi="tiramisu">
         <activity
             android:name=".MainActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:exported="true"
             android:theme="@style/Theme.TryToLie">
             <intent-filter>

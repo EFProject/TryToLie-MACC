@@ -39,7 +39,6 @@ import com.example.trytolie.game.model.game.controller.GameController
 import com.example.trytolie.multiplayer.game.GameData
 import com.example.trytolie.multiplayer.game.GameUIClient
 import com.example.trytolie.multiplayer.game.GameViewModel
-import com.example.trytolie.multiplayer.room.RoomData
 import com.example.trytolie.multiplayer.room.RoomUIClient
 import com.example.trytolie.multiplayer.room.RoomViewModel
 import com.example.trytolie.sign_in.AuthUIClient
@@ -49,17 +48,16 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 @Composable
 fun GameOrchestrator(
-    roomViewModel: RoomViewModel,
     signInViewModel: SignInViewModel?,
     gameViewModel: GameViewModel,
+    roomViewModel: RoomViewModel,
     gameUIClient: GameUIClient? = null,
     roomUIClient: RoomUIClient? = null,
     authUIClient: AuthUIClient? = null,
-    userData: UserData? = null
+    userData: UserData? = null,
 ) {
     val showGameDialog = remember { mutableStateOf(false) }
     val showOnlineExitDialog = remember { mutableStateOf(false) }
-    val roomData = roomViewModel.roomData.collectAsState()
     val gameData = gameViewModel.gameData.collectAsState()
 
     Column(
@@ -68,9 +66,9 @@ fun GameOrchestrator(
             .background(MaterialTheme.colorScheme.background)
     ) {
 
-        GamePlayers(gameData = gameData.value,userData=userData,roomData = roomData.value)
+        GamePlayers(gameData = gameData.value,userData=userData)
 
-        Status(gameData = gameData.value, roomData = roomData.value)
+        Status(gameData = gameData.value)
 
         GameControls(
             showGameMenu = { showGameDialog.value = true },
@@ -80,7 +78,6 @@ fun GameOrchestrator(
         GameController(
             modifier = Modifier,
             roomViewModel = roomViewModel,
-            roomUIClient = roomUIClient!!,
             gameViewModel = gameViewModel,
             gameUIClient = gameUIClient!!,
             userData = userData!!
@@ -95,7 +92,6 @@ fun GameOrchestrator(
             roomUIClient = roomUIClient,
             authUIClient = authUIClient,
             signInViewModel = signInViewModel,
-            roomData = roomData.value,
             gameData = gameData.value,
             userData = userData
         )
@@ -106,7 +102,6 @@ fun GameOrchestrator(
 @Composable
 private fun Status(
     gameData: GameData,
-    roomData: RoomData
 ) {
     Row(
         modifier = Modifier
@@ -117,7 +112,7 @@ private fun Status(
         horizontalArrangement = Arrangement.Center
     ) {
         Text(
-            text = "Game: " + gameData.gameId + "Room: " + roomData.roomId,
+            text = "Game: " + gameData.gameId + "\n Turn: " + gameData.currentTurn,
             modifier = Modifier.padding(start = 12.dp),
             color = MaterialTheme.colorScheme.onPrimary,
         )
@@ -360,13 +355,6 @@ fun OnFinishedGameDialogOnline(
                     style = MaterialTheme.typography.bodyLarge,
                     textAlign = TextAlign.Center
                 )
-                Spacer(modifier = Modifier.height(2.dp))
-                Text(
-                    text = "Updated elo rank in your profile",
-                    color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.bodyLarge,
-                    textAlign = TextAlign.Center
-                )
                 Spacer(modifier = Modifier.height(15.dp))
                 if(isLoading) {
                     CircularProgressIndicator(
@@ -400,27 +388,6 @@ fun OnFinishedGameDialogOnline(
 }
 */
 
-/*fun getUserIds(roomViewModel: RoomViewModel, matchType: String, userData: UserData?): Pair<String, String> {
-    var userIdOne = ""
-    var userIdTwo = ""
-
-    when (matchType) {
-        "ONLINE" -> {
-            userIdOne = roomViewModel.roomData.value.playerOneId
-            userIdTwo = roomViewModel.roomData.value.playerTwoId!!
-        }
-        "ONE_OFFLINE" -> {
-            userIdOne = userData!!.id
-            userIdTwo = "AI Player"
-        }
-        "TWO_OFFLINE" -> {
-            userIdOne = userData!!.id
-            userIdTwo = "Local player"
-        }
-    }
-
-    return Pair(userIdOne, userIdTwo)
-}*/
 
 /*fun getResults(matchType: String, resolution: Resolution, result: String?, startColor: Set?): Int{
     if(resolution != Resolution.CHECKMATE){
@@ -449,21 +416,10 @@ fun OnFinishedGameDialogOnline(
     return 0
 }*/
 
-/*
-fun getNewUserData(userData: UserData, results: Int): UserData {
-    //need to check if when online, if i'm black and i won, matchesWon increase
-    return if (results == 0) {
-        userData.copy(matchesPlayed = userData.matchesPlayed+1, matchesWon = userData.matchesWon+1)
-    } else {
-        userData.copy(matchesPlayed = userData.matchesPlayed+1)
-    }
-}*/
-
 @Preview
 @Composable
 fun GameOrchestratorPreview() {
     GameOrchestrator(
-        roomViewModel = RoomViewModel(),
         roomUIClient = RoomUIClient(
             context = LocalContext.current,
             db = FirebaseFirestore.getInstance(),
@@ -474,10 +430,9 @@ fun GameOrchestratorPreview() {
             context = LocalContext.current,
             db = FirebaseFirestore.getInstance(),
             gameViewModel = GameViewModel(),
-            userData = UserData()
         ),
         gameViewModel = GameViewModel(),
-        signInViewModel = SignInViewModel(
-        )
+        signInViewModel = SignInViewModel(),
+        roomViewModel = RoomViewModel(),
     )
 }

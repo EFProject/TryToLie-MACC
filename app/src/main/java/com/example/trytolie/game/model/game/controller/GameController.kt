@@ -1,5 +1,6 @@
 package com.example.trytolie.game.model.game.controller
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,14 +12,18 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.ArrowCircleRight
 import androidx.compose.material.icons.filled.ChatBubbleOutline
 import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -31,38 +36,44 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import com.example.trytolie.game.model.game.MotionSensitiveButton
 import com.example.trytolie.game.model.game.speechParser.SpeechParser
 import com.example.trytolie.game.ui.app.ButtonSpeechToText
 import com.example.trytolie.multiplayer.game.GameStatus
 import com.example.trytolie.multiplayer.game.GameUIClient
 import com.example.trytolie.multiplayer.game.GameViewModel
-import com.example.trytolie.multiplayer.room.RoomUIClient
 import com.example.trytolie.multiplayer.room.RoomViewModel
 import com.example.trytolie.sign_in.UserData
+import com.example.trytolie.ui.navigation.TryToLieRoute
 import kotlinx.coroutines.launch
 
 @Composable
 fun GameController(
     modifier: Modifier = Modifier,
-    roomUIClient: RoomUIClient,
     roomViewModel: RoomViewModel,
     gameUIClient: GameUIClient,
     gameViewModel: GameViewModel,
     userData: UserData
 ) {
 
-    val roomData by roomViewModel.roomData.collectAsState()
     val gameData by gameViewModel.gameData.collectAsState()
     val lifeScope = rememberCoroutineScope()
     var updateDiceResults by remember { mutableStateOf(false) }
+    var msgBE by remember { mutableStateOf("") }
 
     LaunchedEffect(updateDiceResults) {
         when {
             updateDiceResults -> {
                 lifeScope.launch {
-                    gameUIClient.updateGame(gameData)
+                    val msgBEJson = gameUIClient.updateGame(gameData)
+                    msgBE = msgBEJson?.get("msg").toString()
                     updateDiceResults = false
                 }
             }
@@ -85,9 +96,14 @@ fun GameController(
         }
         Spacer(modifier = Modifier.height(20.dp))
         if(gameData.currentPlayer == userData.id || true){
+
             when (gameData.gameState) {
 
                 GameStatus.LIAR_PHASE -> {
+                    Text(
+                        text = "${gameData.declarationResults[0]} times the value ${gameData.declarationResults[1]}",
+                        modifier = Modifier.padding(16.dp)
+                    )
                     Button(
                         onClick = {
                             updateDiceResults = true
@@ -114,6 +130,75 @@ fun GameController(
                     }
                 }
 
+                GameStatus.RESOLVE_PHASE -> {
+                    if(gameData.winner == "") {
+                        Text(
+                            text = msgBE,
+                            modifier = Modifier.padding(16.dp)
+                        )
+                        Surface(
+                            modifier = Modifier.padding(16.dp),
+                            // elevation = 4.dp,
+                            shape = RoundedCornerShape(8.dp)
+                        ) {
+                            Text(
+                                text = buildAnnotatedString {
+                                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                        append("Then the current state of play is:\n")
+                                    }
+                                    append("Player 1 has ${gameData.playerOneDice} dice\n")
+                                    append("Player 2 has ${gameData.playerTwoDice} dice")
+                                },
+                                modifier = Modifier.padding(16.dp),
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                        Button(
+                            onClick = {
+                                gameUIClient.updateGameState(GameStatus.DICE_PHASE)
+                            }) {
+                            Icon(
+                                imageVector = Icons.Default.ArrowCircleRight,
+                                modifier = Modifier.size(16.dp),
+                                contentDescription = "ArrowCircleRight icon"
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(text = "Keep playing")
+                        }
+                    } else {
+                        Text(
+                            text = msgBE,
+                            modifier = Modifier.padding(16.dp)
+                        )
+                        Surface(
+                            modifier = Modifier.padding(16.dp),
+                            // elevation = 4.dp,
+                            shape = RoundedCornerShape(8.dp)
+                        ) {
+                            Text(
+                                text = "Player ${gameData.winner} won the game!!",
+                                modifier = Modifier.padding(16.dp),
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                        Button(
+                            onClick = {
+                                gameUIClient.exitFromGame()
+                                roomViewModel.setFullViewPage(TryToLieRoute.HOME)
+                            },
+                            colors = ButtonDefaults.buttonColors(Color.Red) // Set the background color to red
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ExitToApp, // Use an exit-related icon
+                                modifier = Modifier.size(16.dp),
+                                contentDescription = "Exit icon"
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(text = "Exit")
+                        }
+                    }
+                }
+
                 GameStatus.DICE_PHASE -> {
                     val availableDice by remember { mutableIntStateOf(
                         if(userData.id == gameData.playerOneId) gameData.playerOneDice else gameData.playerTwoDice
@@ -127,6 +212,26 @@ fun GameController(
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
+                        Surface(
+                            modifier = Modifier.padding(16.dp),
+                            // elevation = 4.dp,
+                            shape = RoundedCornerShape(8.dp)
+                        ) {
+                            Text(
+                                text = "Shake the phone to roll the dice!",
+                                modifier = Modifier.padding(16.dp),
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                        MotionSensitiveButton(
+                            onClick = {
+                                diceValues = IntArray(availableDice) { (1..6).random() }
+                                gameData.diceResults = diceValues.toList()
+                                updateDiceResults = true
+                                Log.d("MotionSensitiveButton", "Button clicked with motion detected")
+                            }
+                        )
+
                         Button(
                             onClick = {
                                 diceValues = IntArray(availableDice) { (1..6).random() }
@@ -135,7 +240,7 @@ fun GameController(
                             },
                             modifier = Modifier.padding(16.dp)
                         ) {
-                            Text(text = "Roll Dice")
+                            Text(text = "Roll Dice Click")
                         }
                     }
                 }
@@ -162,7 +267,7 @@ fun GameController(
                             contentDescription = "ChatBubbleOutline icon"
                         )
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text(text = "Declare your dice")
+                        Text(text = "Declare your dice randomly")
                     }
                     ButtonSpeechToText(setSpokenText = {textSpoken = it})
                     if (textSpoken != "") {

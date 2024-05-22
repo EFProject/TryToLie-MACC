@@ -7,7 +7,6 @@ import androidx.core.content.ContextCompat.getString
 import com.example.trytolie.BuildConfig
 import com.example.trytolie.R
 import com.example.trytolie.multiplayer.room.RoomData
-import com.example.trytolie.sign_in.UserData
 import com.example.trytolie.ui.utils.GameAPI
 import com.example.trytolie.ui.utils.HelperGameAPI
 import com.google.firebase.firestore.CollectionReference
@@ -21,7 +20,6 @@ class GameUIClient(
     private val context: Context,
     db : FirebaseFirestore,
     private val gameViewModel: GameViewModel,
-    private val userData : UserData
 ) {
     private val gameRemoteService : GameAPI = HelperGameAPI.getInstance()
     private val token = BuildConfig.TOKEN
@@ -81,19 +79,22 @@ class GameUIClient(
         }
     }
 
-    suspend fun updateGame(model : GameData) {
-        try {
+    suspend fun updateGame(model : GameData): JsonObject? {
+        return try {
             val data = gson.toJson(model)
             val gameResponse = gameRemoteService.update(token = token, id = model.gameId, body = data)
             val responseBody = gameResponse.body()
             Log.d("Game Client",responseBody.toString())
-            } catch(e: Exception) {
-                e.printStackTrace()
-                if(e is CancellationException) throw e
-            }
+            responseBody
+        } catch(e: Exception) {
+            e.printStackTrace()
+            if(e is CancellationException) throw e
+            null
+        }
     }
 
     private fun stopListeningToGameData() {
+        Log.d("Game Client", "gameDataListener has been closed")
         gameDataListener?.remove()
     }
 
@@ -114,12 +115,12 @@ class GameUIClient(
         }
     }
 
-    suspend fun createGame(roomData: RoomData): JsonObject? {
+    suspend fun createGame(roomData: RoomData): Boolean {
         return try {
             val gameResponse = gameRemoteService.create(token = token, id = roomData.roomId)
             val responseBody = gameResponse.body()
             Log.d("Game Client",responseBody.toString())
-            return gameResponse.body()
+            gameResponse.isSuccessful
         } catch (e: Exception) {
             e.printStackTrace()
             if (e is CancellationException) throw e
@@ -128,14 +129,14 @@ class GameUIClient(
                 "Could not create a game!",
                 Toast.LENGTH_LONG
             ).show()
-            null
+            false
         }
     }
 
 
-    suspend fun deleteGame(model: GameData)  {
+    fun exitFromGame()  {
         stopListeningToGameData()
-        gameRemoteService.delete(token=token, id = model.roomId)
+        // gameRemoteService.delete(token=token, id = model.roomId)
         gameViewModel.setGameData(GameData())
     }
 

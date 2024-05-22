@@ -24,19 +24,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import androidx.lifecycle.viewModelScope
 import com.example.trytolie.game.ui.dialogs.GameDialog
 import com.example.trytolie.multiplayer.game.GameData
 import com.example.trytolie.multiplayer.game.GameUIClient
 import com.example.trytolie.multiplayer.game.GameViewModel
 import com.example.trytolie.multiplayer.room.RoomData
-import com.example.trytolie.multiplayer.room.RoomStatus
 import com.example.trytolie.multiplayer.room.RoomUIClient
 import com.example.trytolie.multiplayer.room.RoomViewModel
 import com.example.trytolie.sign_in.AuthUIClient
 import com.example.trytolie.sign_in.SignInViewModel
 import com.example.trytolie.sign_in.UserData
-import kotlinx.coroutines.launch
 
 @Composable
 fun GameDialogs(
@@ -62,9 +59,9 @@ fun GameDialogs(
     ManagedOnlineExitDialog(
         showOnlineExitDialog = showOnlineExitDialog,
         roomUIClient = roomUIClient,
+        gameUIClient = gameUIClient,
         roomViewModel = roomViewModel,
         signInViewModel = signInViewModel,
-        roomData = roomData,
         userData = userData,
         authUIClient = authUIClient,
     )
@@ -76,8 +73,8 @@ fun ManagedOnlineExitDialog(
     showOnlineExitDialog : MutableState<Boolean>,
     roomViewModel: RoomViewModel,
     roomUIClient: RoomUIClient? = null,
+    gameUIClient: GameUIClient?,
     userData : UserData?,
-    roomData: RoomData?,
     authUIClient: AuthUIClient?,
     signInViewModel: SignInViewModel?,
 ) {
@@ -103,7 +100,7 @@ fun ManagedOnlineExitDialog(
                     )
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
-                        text = "You will the lose the match.",
+                        text = "You will loose the match.",
                         color = MaterialTheme.colorScheme.onBackground,
                         style = MaterialTheme.typography.bodySmall,
                         textAlign = TextAlign.Center
@@ -111,9 +108,9 @@ fun ManagedOnlineExitDialog(
                     Spacer(modifier = Modifier.height(15.dp))
                     Button(
                         onClick = {
-                            val matchesNew = userData!!.matchesPlayed + 1
+                            //val matchesNew = userData!!.matchesPlayed + 1
 
-                            roomViewModel.viewModelScope.launch {
+                           /* roomViewModel.viewModelScope.launch {
                                 val matchesWon = userData.matchesWon
                                 authUIClient!!.update(
                                     userData = userData.copy(
@@ -121,14 +118,10 @@ fun ManagedOnlineExitDialog(
                                         matchesWon = matchesWon,
                                     )
                                 )
+                            }*/
 
-                                val roomId = roomData?.roomId
-                            }
-
-                            roomUIClient?.updateRoomState(RoomStatus.FINISHED)
+                            gameUIClient?.exitFromGame()
                             showOnlineExitDialog.value = false
-                            roomUIClient!!.stopListeningToRoomData()
-                            roomViewModel.setRoomData(RoomData())
                             roomViewModel.setFullViewPage("")
                         },
                         colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.error)

@@ -129,12 +129,11 @@ fun TryToLieApp(
             userData = userData!!
         )
         TryToLieRoute.ONLINE_GAME -> Surface(color = MaterialTheme.colorScheme.background) {
-            Log.d("ROOM", roomViewModel!!.getRoomData().toString())
             Log.d("GAME", gameViewModel!!.getGameData().toString())
             GameOrchestrator(
                 gameViewModel = gameViewModel,
-                roomViewModel = roomViewModel,
                 signInViewModel = authViewModel,
+                roomViewModel = roomViewModel!!,
                 gameUIClient = gameUIClient,
                 roomUIClient = roomUIClient,
                 authUIClient = authHandler,

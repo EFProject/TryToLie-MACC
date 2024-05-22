@@ -94,9 +94,8 @@ fun HomePage(
         Button(
             onClick = {
                 lifeScope.launch {
-                    val room = roomUIClient.getRoom("room_c31545eea7ba407db336")
-                    val game = gameUIClient.getGame("game_eb042ec82ad44584b590")
-                    if (room != null && game != null) {
+                    val game = gameUIClient.getGame("game_270a36a841e141898b83")
+                    if (game != null) {
                         roomViewModel.setFullViewPage(TryToLieRoute.ONLINE_GAME)
                     } else {
                         Toast.makeText(
@@ -128,7 +127,7 @@ fun HomePagePreview() {
     HomePage(roomViewModel = RoomViewModel(), roomUIClient = RoomUIClient(context = LocalContext.current,
         db = FirebaseFirestore.getInstance(), roomViewModel = RoomViewModel(), userData =  UserData()),
         gameUIClient = GameUIClient(context = LocalContext.current,
-        db = FirebaseFirestore.getInstance(), gameViewModel = GameViewModel(), userData =  UserData())
+        db = FirebaseFirestore.getInstance(), gameViewModel = GameViewModel())
     )
 }
 
