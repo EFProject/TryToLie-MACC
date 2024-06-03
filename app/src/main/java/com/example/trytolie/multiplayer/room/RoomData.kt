@@ -9,10 +9,11 @@ data class RoomData(
     val playerTwoName: String? = null,
     val pictureUrlOne : String = "",
     val pictureUrlTwo : String? = null,
+    val qrCodeUrl : String? = "",
     val roomState: RoomStatus = RoomStatus.WAITING,
 )
 {
-    constructor() : this("-1","-1", "", null,"",null,"",null, RoomStatus.WAITING)
+    constructor() : this("-1","-1", "", null,"",null,"",null, "", RoomStatus.WAITING)
 }
 
 enum class RoomStatus {

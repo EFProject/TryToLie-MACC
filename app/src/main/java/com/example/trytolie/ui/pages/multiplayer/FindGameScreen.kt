@@ -1,5 +1,6 @@
 package com.example.trytolie.ui.pages.multiplayer
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -35,6 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.example.trytolie.R
+import com.example.trytolie.game.model.game.QrScannerCompose
 import com.example.trytolie.multiplayer.game.GameUIClient
 import com.example.trytolie.multiplayer.game.GameViewModel
 import com.example.trytolie.multiplayer.room.RoomData
@@ -104,7 +106,7 @@ fun FindGameScreen(
             }
             findingRoom -> {
                 lifeScope.launch {
-                    roomUIClient.findRoom()
+                    roomUIClient.findFreeRoom("")
                     findingRoom = false
                 }
             }
@@ -136,9 +138,11 @@ fun FindGameScreen(
                         contentDescription = "Search icon"
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text(text = "Find a Room")
+                    Text(text = "Find a free Room")
                 }
                 Spacer(modifier = Modifier.height(10.dp))
+                QrScannerCompose(roomUIClient = roomUIClient)
+
                 Button(
                     onClick = {
                         hostingRoom = true
@@ -176,6 +180,12 @@ fun FindGameScreen(
                     "Waiting for opponent...",
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurface
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Image(
+                    painter = rememberAsyncImagePainter(roomData.qrCodeUrl),
+                    contentDescription = null,
+                    modifier = Modifier.size(150.dp)
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Button(

@@ -75,7 +75,7 @@ class RoomUIClient(
             }
     }
 
-    fun stopListeningToRoomData() {
+    private fun stopListeningToRoomData() {
         Log.d("Room Client", "roomDataListener has been closed")
         roomDataListener?.remove()
     }
@@ -97,9 +97,10 @@ class RoomUIClient(
         }
     }
 
-    suspend fun findRoom(): JsonObject? {
+    suspend fun findFreeRoom(roomId: String): JsonObject? {
         return try {
             val roomDataFind = RoomData(
+                roomId = roomId,
                 playerTwoId = userData.id,
                 playerTwoName = userData.name!!,
                 roomState = RoomStatus.JOINED,
