@@ -68,8 +68,9 @@ class GameUIClient(
             val game = gameViewModel.getGameData()
             val emptyResults: List<Int> = emptyList()
             val updateData = mapOf(
+                "currentTurn" to game.currentTurn + 1,
                 "gameState" to gameState.toString(),
-                "declarationResults" to emptyResults,
+                //"declarationResults" to emptyResults,
                 "diceResults" to emptyResults
             )
             dbGames.document(game.gameId).update(updateData)

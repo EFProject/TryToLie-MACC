@@ -97,11 +97,19 @@ fun GameController(
         Spacer(modifier = Modifier.height(20.dp))
         if(gameData.currentPlayer == userData.id || true){
 
+            val availableDice by remember { mutableIntStateOf(
+                if(userData.id == gameData.playerOneId) gameData.playerOneDice else gameData.playerTwoDice
+            ) }
+
             when (gameData.gameState) {
 
                 GameStatus.LIAR_PHASE -> {
                     Text(
                         text = "${gameData.declarationResults[0]} times the value ${gameData.declarationResults[1]}",
+                        modifier = Modifier.padding(16.dp)
+                    )
+                    Text(
+                        text = "You have $availableDice dice",
                         modifier = Modifier.padding(16.dp)
                     )
                     Button(
@@ -116,7 +124,12 @@ fun GameController(
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(text = "LIAR!")
                     }
+                    var enable = true
+                    // use cases when player can't make an higher declaration
+                    if(gameData.declarationResults[0] > availableDice) enable= false
+                    if(gameData.declarationResults[0] == availableDice && gameData.declarationResults[1] == 6) enable= false
                     Button(
+                        enabled = enable,
                         onClick = {
                             gameUIClient.updateGameState(GameStatus.DICE_PHASE)
                         }) {
@@ -200,9 +213,7 @@ fun GameController(
                 }
 
                 GameStatus.DICE_PHASE -> {
-                    val availableDice by remember { mutableIntStateOf(
-                        if(userData.id == gameData.playerOneId) gameData.playerOneDice else gameData.playerTwoDice
-                    ) }
+
                     var diceValues by remember { mutableStateOf(IntArray(availableDice)) }
 
                     Column(
@@ -255,6 +266,15 @@ fun GameController(
                         )
                     }
 
+                    if(gameData.declarationResults.isNotEmpty()){
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Previous Declaration: ${gameData.declarationResults[0]} times ${gameData.declarationResults[1]}",
+                            modifier = Modifier.padding(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                    }
+
                     Button(
                         onClick = {
                             declaredValues = IntArray(2) { (1..6).random() }
@@ -271,23 +291,24 @@ fun GameController(
                     }
                     ButtonSpeechToText(setSpokenText = {textSpoken = it})
                     if (textSpoken != "") {
-                        val declaration = SpeechParser.parseSpeechToMove(textSpoken)
+                        val declaration = SpeechParser.parseSpeechToDeclaration(textSpoken)
+                        val checkDeclarationOutcome = SpeechParser.checkDeclaration(declaration, availableDice, gameData.declarationResults)
                         Text(
                             modifier = Modifier.padding(top = 8.dp),
-                            text = textSpoken,
+                            text = "$textSpoken  $declaration",
                             style = MaterialTheme.typography.bodySmall,
                             textAlign = TextAlign.Center,
                             color = MaterialTheme.colorScheme.secondary
                         )
                         Text(
                             modifier = Modifier.padding(top = 8.dp),
-                            text = declaration ?: "Retry",
+                            text = checkDeclarationOutcome,
                             style = MaterialTheme.typography.bodySmall,
                             textAlign = TextAlign.Center,
                             color = MaterialTheme.colorScheme.secondary
                         )
-                        if (declaration != null) {
-                            declaredValues = intArrayOf(declaration[0].toString().toInt(), declaration[1].toString().toInt())
+                        if (checkDeclarationOutcome == "OK") {
+                            declaredValues = intArrayOf(declaration?.get(0).toString().toInt(), declaration?.get(1).toString().toInt())
                             gameData.declarationResults = declaredValues.toList()
                             textSpoken = ""
                             updateDiceResults = true

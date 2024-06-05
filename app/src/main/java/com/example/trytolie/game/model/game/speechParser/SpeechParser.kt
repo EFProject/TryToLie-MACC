@@ -5,7 +5,7 @@ import java.util.Locale
 
 object SpeechParser{
 
-    fun parseSpeechToMove(textSpoken: String): String? {
+    fun parseSpeechToDeclaration(textSpoken: String): String? {
 
         val textSpokenParsed = parseString(textSpoken)
         if (textSpokenParsed.isNullOrEmpty()){
@@ -59,9 +59,32 @@ object SpeechParser{
             "6" to "6",
         )
 
-        return textSpoken.split(" ").joinToString(" ") { word ->
-            wordToDigitMap[word.lowercase(Locale.getDefault())] ?: ""
+        return wordToDigitMap[textSpoken.lowercase(Locale.getDefault())] ?: ""
+
+    }
+
+    fun checkDeclaration(
+        declaration: String?,
+        diceNumber: Int,
+        declarationResults: List<Int> ): String {
+
+        if (declaration.isNullOrEmpty()){
+            return "Retry"
         }
+
+        val occurrence = declaration[0].toString().toInt()
+        val value = declaration[1].toString().toInt()
+        if(occurrence > diceNumber) return "You have only $diceNumber dice"
+
+        if(declarationResults.isNotEmpty()){
+            val preOccurrence = declarationResults[0]
+            val preValue = declarationResults[1]
+            if(occurrence > preOccurrence &&  value == preValue) return "OK"
+            if(occurrence <= preOccurrence && value > preValue) return "OK"
+
+        } else return "OK"
+
+        return "You must make a declaration higher than the previous"
     }
 
 }
