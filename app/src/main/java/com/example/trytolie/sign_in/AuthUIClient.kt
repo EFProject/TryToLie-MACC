@@ -3,12 +3,14 @@ package com.example.trytolie.sign_in
 import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
+import android.util.Log
 import android.widget.Toast
 import com.example.trytolie.BuildConfig
 import com.example.trytolie.ui.utils.HelperClassUser
 import com.example.trytolie.ui.utils.UserAPI
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.SignInClient
+import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
@@ -24,11 +26,12 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
+import java.util.Date
 
 class AuthUIClient(
     private val context: Context,
     private val oneTapClient: SignInClient,
-    private val loginToogle : () -> Unit,
+    private val loginToggle : () -> Unit,
     private val loadingText : (s : String) -> Unit,
     private val signInViewModel: SignInViewModel
 ) {
@@ -44,6 +47,14 @@ class AuthUIClient(
             ).await()
         } catch(e: Exception) {
             e.printStackTrace()
+            when (e) {
+                is ApiException -> {
+                    Log.e("AuthUIClient", "ApiException: ${e.statusCode} - ${e.message}")
+                }
+                else -> {
+                    Log.e("AuthUIClient", "Unknown exception: ${e.message}")
+                }
+            }
             if(e is CancellationException) throw e
             null
         }
@@ -54,7 +65,7 @@ class AuthUIClient(
         email: String, password: String
     ) = try {
         loadingText("Try to log in with email...")
-        loginToogle()
+        loginToggle()
         val user = auth.signInWithEmailAndPassword(email,password).await().user
         SignInResult(
             data = user?.run {
@@ -84,20 +95,19 @@ class AuthUIClient(
         email: String, password: String, username: String
     ) = try {
         loadingText("Try to create your profile...")
-        loginToogle()
+        loginToggle()
         val user  = auth.createUserWithEmailAndPassword(email, password).await().user
         if (user != null) {
-            val userResponse =  userRemoteService.get(token=token,id= user.uid)
-            if (userResponse.code() == 204) {
-                val data = gson.toJson(
-                    UserData(
-                        id = user.uid,
-                        email = user.email,
-                        name = username
-                    )
+            val data = gson.toJson(
+                UserData(
+                    id = user.uid,
+                    name = username,
+                    email = user.email,
+                    provider =  "Email/password",
+                    signupDate = Date(user.metadata?.creationTimestamp!!)
                 )
-                userRemoteService.create(token = token, body = data)
-            }
+            )
+            userRemoteService.create(token = token, body = data)
         }
         SignInResult(
             data = user?.run {
@@ -111,6 +121,7 @@ class AuthUIClient(
         )
     } catch(e: Exception) {
         e.printStackTrace()
+        Log.e("AuthUIClient", "firebaseSignUpWithEmailAndPassword failed.", e)   // Error log message
         if(e is CancellationException) throw e
         val error: String = when(e) {
             is FirebaseAuthWeakPasswordException -> "The password is too weak. Please choose a stronger password."
@@ -130,7 +141,7 @@ class AuthUIClient(
         val googleCredentials = GoogleAuthProvider.getCredential(googleIdToken, null)
         return try {
             loadingText("Try to login with google...")
-            loginToogle()
+            loginToggle()
             val user = auth.signInWithCredential(googleCredentials).await().user
             if (user != null) {
                 val userResponse =  userRemoteService.get(token=token,id= user.uid)
@@ -138,7 +149,9 @@ class AuthUIClient(
                     val data = gson.toJson(UserData(
                         id = user.uid,
                         email = user.email,
-                        name = user.displayName
+                        name = user.displayName,
+                        provider =  "Google",
+                        signupDate = Date(user.metadata?.creationTimestamp!!)
                     )
                     )
                     userRemoteService.create(token=token, body = data)
@@ -242,12 +255,11 @@ class AuthUIClient(
         return signInViewModel.setUserData(SignInResult(data = userData, errorMessage = null))
     }
 
-    suspend fun confirmEdits(userId: String?, newEmail: String?, newUsername: String?, country: String?, newAvatarFile: File?, userData: UserData): Boolean {
+    suspend fun confirmEdits(userId: String?, newEmail: String?, newUsername: String?, newAvatarFile: File?, userData: UserData): Boolean {
         val userDataObject = UserData(
             id = userId.toString(),
             email = newEmail,
             name = newUsername,
-            country = country,
             matchesPlayed = userData.matchesPlayed,
             matchesWon = userData.matchesWon,
         )

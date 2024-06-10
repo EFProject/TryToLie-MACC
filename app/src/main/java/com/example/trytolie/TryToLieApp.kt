@@ -46,6 +46,8 @@ import com.example.trytolie.ui.navigation.TryToLieNavigationRail
 import com.example.trytolie.ui.navigation.TryToLieRoute
 import com.example.trytolie.ui.navigation.TryToLieTopLevelDestination
 import com.example.trytolie.ui.pages.HomePage
+import com.example.trytolie.ui.pages.InfoScreen
+import com.example.trytolie.ui.pages.PasswordResetScreen
 import com.example.trytolie.ui.pages.SignInScreen
 import com.example.trytolie.ui.pages.SignUpScreen
 import com.example.trytolie.ui.pages.multiplayer.FindGameScreen
@@ -298,7 +300,12 @@ private fun TryToLieNavHost(
             startDestination = TryToLieRoute.HOME,
         ) {
             composable(TryToLieRoute.HOME) {
-                /*HomePage()*/
+                HomePage(
+                    modifier = modifier,
+                    roomViewModel = roomViewModel!!,
+                    roomUIClient = roomUIClient!!,
+                    gameUIClient = gameUIClient!!
+                )
             }
             composable(TryToLieRoute.PROFILE) {
                 /*ProfileScreen()*/
@@ -316,7 +323,7 @@ private fun TryToLieNavHost(
                     modifier = modifier,
                     authHandler = authHandler,
                     authViewModel = authViewModel,
-                    googleIntentLaucher = googleIntentLauncher,
+                    googleIntentLauncher = googleIntentLauncher,
                     navController = navController,
                     context = context
                 )
@@ -330,8 +337,18 @@ private fun TryToLieNavHost(
                     context = context
                 )
             }
-            composable(TryToLieRoute.CONTACT) {
- /*               ContactUsScreen()*/
+            composable(TryToLieRoute.PASSWORD_RESET) {
+                PasswordResetScreen(
+                    state = authState,
+                    modifier = modifier,
+                    authHandler = authHandler
+                )
+            }
+            composable(TryToLieRoute.INFO) {
+                InfoScreen(
+                    state = authState,
+                    modifier = modifier
+                )
             }
         }
     } else {

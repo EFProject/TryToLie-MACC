@@ -1,5 +1,7 @@
 package com.example.trytolie.sign_in
 
+import java.util.Date
+
 data class SignInResult(
     val data: UserData?,
     val errorMessage: String?
@@ -13,6 +15,5 @@ data class UserData(
     val provider: String? = null,
     val matchesPlayed: Int = 0,
     val matchesWon: Int = 0,
-    val country: String? = null,
-    val signupDate: String? = null,
+    val signupDate: Date? = null,
 )

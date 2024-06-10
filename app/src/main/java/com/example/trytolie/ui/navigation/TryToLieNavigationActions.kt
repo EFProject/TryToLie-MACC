@@ -4,12 +4,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Login
 import androidx.compose.material.icons.automirrored.outlined.Login
 import androidx.compose.material.icons.filled.AppRegistration
-import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.outlined.AppRegistration
-import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -22,10 +22,10 @@ object TryToLieRoute {
     const val PROFILE = "Profile"
     const val SIGN_IN = "Sign In"
     const val SIGN_UP = "Sign Up"
-    const val CONTACT = "Contact Us"
+    const val PASSWORD_RESET = "Password Reset"
+    const val INFO = "Info"
     const val FIND_GAME = "Multiplayer Game"
     const val ONLINE_GAME = "Online Game"
-    const val SELECT_COLOR = "Select Color"
 }
 
 data class TryToLieTopLevelDestination(
@@ -76,10 +76,10 @@ val LOGIN_LEVEL_DESTINATIONS = listOf(
         iconTextId = R.string.tab_sign_up
     ),
     TryToLieTopLevelDestination(
-        route = TryToLieRoute.CONTACT,
-        selectedIcon = Icons.Default.Email,
-        unselectedIcon = Icons.Outlined.Email,
-        iconTextId = R.string.tab_contacts
+        route = TryToLieRoute.INFO,
+        selectedIcon = Icons.Default.Info,
+        unselectedIcon = Icons.Outlined.Info,
+        iconTextId = R.string.tab_info
     )
 )
 

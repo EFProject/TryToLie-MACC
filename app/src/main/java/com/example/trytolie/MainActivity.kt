@@ -56,7 +56,7 @@ class MainActivity : ComponentActivity() {
         AuthUIClient(
             context = applicationContext,
             oneTapClient = Identity.getSignInClient(applicationContext),
-            loginToogle = { userAuthState.value = UserAuthStateType.UNDEFINED},
+            loginToggle = { userAuthState.value = UserAuthStateType.UNDEFINED},
             loadingText = {s : String -> loadingText = s},
             signInViewModel = signInViewModel
         )
@@ -147,7 +147,37 @@ class MainActivity : ComponentActivity() {
                     }
 
                     UserAuthStateType.AUTHENTICATED -> {
+                        val immersivePage by roomViewModel.fullViewPage.collectAsState()
+                        val roomUIClient by lazy {
+                            RoomUIClient(
+                                context = applicationContext,
+                                db = db,
+                                userData = userData.data!!,
+                                roomViewModel = roomViewModel
+                            )
+                        }
+                        val gameUIClient by lazy {
+                            GameUIClient(
+                                context = applicationContext,
+                                db = db,
+                                gameViewModel = gameViewModel
+                            )
+                        }
 
+                        TryToLieApp(
+                            windowSize = windowSize,
+                            authState= authState,
+                            displayFeatures = displayFeatures,
+                            authViewModel = signInViewModel,
+                            roomViewModel = roomViewModel,
+                            gameViewModel = gameViewModel,
+                            isAuthenticated = true,
+                            authHandler = authUIClient,
+                            roomUIClient = roomUIClient,
+                            gameUIClient = gameUIClient,
+                            userData = userData.data!!,
+                            immersivePage = immersivePage,
+                        )
                     }
 
                     UserAuthStateType.GUEST -> {

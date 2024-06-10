@@ -54,7 +54,7 @@ fun SignInScreen(
     modifier: Modifier,
     authHandler: AuthUIClient? = null,
     authViewModel: SignInViewModel? = null,
-    googleIntentLaucher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>? = null,
+    googleIntentLauncher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>? = null,
     navController: NavController? = null,
     context: Context? = null
 ) {
@@ -169,7 +169,7 @@ fun SignInScreen(
             authViewModel!!.viewModelScope.launch {
                 val signInIntentSender =
                     authHandler!!.signIn()
-                googleIntentLaucher!!.launch(
+                googleIntentLauncher!!.launch(
                     IntentSenderRequest.Builder(
                         signInIntentSender
                             ?: return@launch
@@ -187,7 +187,7 @@ fun SignInScreen(
         Spacer(modifier = Modifier.size(8.dp))
         Text(
             modifier = Modifier.clickable {
-                navController?.navigate(TryToLieRoute.CONTACT) {
+                navController?.navigate(TryToLieRoute.PASSWORD_RESET) {
                     popUpTo(navController.graph.findStartDestination().id) {
                         saveState = true
                     }
@@ -195,7 +195,7 @@ fun SignInScreen(
                     restoreState = true
                 }
             },
-            text = "Have you forgotten your password?",
+            text = "Forgot Password?",
             style = MaterialTheme.typography.bodySmall,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.outline,

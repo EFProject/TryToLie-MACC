@@ -1,29 +1,47 @@
 {
 	"project_info": {
-	  "project_number": "551530242796",
-	  "project_id": "trytolie-4a461",
-	  "storage_bucket": "trytolie-4a461.appspot.com"
+		"project_number": "551530242796",
+		"project_id": "trytolie-4a461",
+		"storage_bucket": "trytolie-4a461.appspot.com"
 	},
 	"client": [
-	  {
-		"client_info": {
-		  "mobilesdk_app_id": "1:551530242796:android:c6239f1533c4befadd7bc9",
-		  "android_client_info": {
-			"package_name": "com.example.trytolie"
-		  }
-		},
-		"oauth_client": [],
-		"api_key": [
-		  {
-			"current_key": "AIzaSyCHZdrJxGAHzbNdDhqkqtETxW3-oBrotdA"
-		  }
-		],
-		"services": {
-		  "appinvite_service": {
-			"other_platform_oauth_client": []
-		  }
+		{
+			"client_info": {
+				"mobilesdk_app_id": "1:551530242796:android:c6239f1533c4befadd7bc9",
+				"android_client_info": {
+					"package_name": "com.example.trytolie"
+				}
+			},
+			"oauth_client": [
+				{
+					"client_id": "551530242796-pnsj6ljodstbj5agrfhrjgbjunkv89gp.apps.googleusercontent.com",
+					"client_type": 1,
+					"android_info": {
+						"package_name": "com.example.trytolie",
+						"certificate_hash": "bd76b2d6b232a869d70a8c27eeb1812e20a00fe7"
+					}
+				},
+				{
+					"client_id": "551530242796-f627r4o3nau6o6fl3q6tej10qno3ku20.apps.googleusercontent.com",
+					"client_type": 3
+				}
+			],
+			"api_key": [
+				{
+					"current_key": "AIzaSyCHZdrJxGAHzbNdDhqkqtETxW3-oBrotdA"
+				}
+			],
+			"services": {
+				"appinvite_service": {
+					"other_platform_oauth_client": [
+						{
+							"client_id": "551530242796-f627r4o3nau6o6fl3q6tej10qno3ku20.apps.googleusercontent.com",
+							"client_type": 3
+						}
+					]
+				}
+			}
 		}
-	  }
 	],
 	"configuration_version": "1"
-  }
+}

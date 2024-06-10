@@ -51,6 +51,7 @@ import com.example.trytolie.multiplayer.game.GameUIClient
 import com.example.trytolie.multiplayer.game.GameViewModel
 import com.example.trytolie.multiplayer.room.RoomViewModel
 import com.example.trytolie.sign_in.UserData
+import com.example.trytolie.ui.components.DiceRender
 import com.example.trytolie.ui.navigation.TryToLieRoute
 import kotlinx.coroutines.launch
 
@@ -265,6 +266,7 @@ fun GameController(
                             modifier = Modifier.padding(16.dp)
                         )
                     }
+                    DiceRender(diceValues = gameData.diceResults)
 
                     if(gameData.declarationResults.isNotEmpty()){
                         Spacer(modifier = Modifier.width(8.dp))
