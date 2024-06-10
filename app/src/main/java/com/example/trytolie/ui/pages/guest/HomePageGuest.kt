@@ -1,4 +1,4 @@
-package com.example.trytolie.ui.pages
+package com.example.trytolie.ui.pages.guest
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -42,7 +42,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 
-fun HomePage(
+fun HomePageGuest(
     modifier: Modifier = Modifier,
     roomViewModel: RoomViewModel,
     roomUIClient: RoomUIClient,
@@ -61,7 +61,6 @@ fun HomePage(
             painter = painterResource(id = R.drawable.trytolie_logo),
             contentDescription = stringResource(id = R.string.logo),
             modifier = Modifier.size(200.dp),
-            //colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
@@ -124,7 +123,7 @@ fun HomePage(
 @Preview
 @Composable
 fun HomePagePreview() {
-    HomePage(roomViewModel = RoomViewModel(), roomUIClient = RoomUIClient(context = LocalContext.current,
+    HomePageGuest(roomViewModel = RoomViewModel(), roomUIClient = RoomUIClient(context = LocalContext.current,
         db = FirebaseFirestore.getInstance(), roomViewModel = RoomViewModel(), userData =  UserData()),
         gameUIClient = GameUIClient(context = LocalContext.current,
         db = FirebaseFirestore.getInstance(), gameViewModel = GameViewModel())

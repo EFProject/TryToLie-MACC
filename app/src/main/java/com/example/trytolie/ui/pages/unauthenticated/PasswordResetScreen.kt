@@ -1,4 +1,4 @@
-package com.example.trytolie.ui.pages
+package com.example.trytolie.ui.pages.unauthenticated
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement

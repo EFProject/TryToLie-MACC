@@ -1,4 +1,4 @@
-package com.example.trytolie.ui.pages.profile
+package com.example.trytolie.ui.pages.guest
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement

@@ -14,6 +14,9 @@ import retrofit2.http.Path
 
 
 interface GameAPI {
+    @GET("/api/v1/history/{id}")
+    suspend fun getAll(@Header("Authorization") token: String, @Path("id") id: String): retrofit2.Response<JsonObject>
+
     @GET("/api/v1/game/{id}")
     suspend fun get(@Header("Authorization") token: String, @Path("id") id: String): retrofit2.Response<JsonObject>
 

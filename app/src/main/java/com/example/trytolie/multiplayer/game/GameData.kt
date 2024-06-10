@@ -26,3 +26,7 @@ enum class GameStatus {
     DICE_PHASE,                 //handle dice rolling phase
     DECLARATION_PHASE,          //handle dice declaration phase
 }
+
+data class GamesList(
+    val games: List<GameData>
+)

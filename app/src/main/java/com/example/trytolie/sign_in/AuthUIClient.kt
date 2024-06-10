@@ -104,7 +104,7 @@ class AuthUIClient(
                     name = username,
                     email = user.email,
                     provider =  "Email/password",
-                    signupDate = Date(user.metadata?.creationTimestamp!!)
+                    signupDate = Date(user.metadata?.creationTimestamp!!).toString()
                 )
             )
             userRemoteService.create(token = token, body = data)
@@ -151,7 +151,7 @@ class AuthUIClient(
                         email = user.email,
                         name = user.displayName,
                         provider =  "Google",
-                        signupDate = Date(user.metadata?.creationTimestamp!!)
+                        signupDate = Date(user.metadata?.creationTimestamp!!).toString()
                     )
                     )
                     userRemoteService.create(token=token, body = data)

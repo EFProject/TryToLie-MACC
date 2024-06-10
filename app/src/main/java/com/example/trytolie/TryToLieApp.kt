@@ -7,13 +7,25 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
@@ -22,7 +34,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -45,13 +61,16 @@ import com.example.trytolie.ui.navigation.TryToLieNavigationActions
 import com.example.trytolie.ui.navigation.TryToLieNavigationRail
 import com.example.trytolie.ui.navigation.TryToLieRoute
 import com.example.trytolie.ui.navigation.TryToLieTopLevelDestination
-import com.example.trytolie.ui.pages.HomePage
-import com.example.trytolie.ui.pages.InfoScreen
-import com.example.trytolie.ui.pages.PasswordResetScreen
-import com.example.trytolie.ui.pages.SignInScreen
-import com.example.trytolie.ui.pages.SignUpScreen
-import com.example.trytolie.ui.pages.multiplayer.FindGameScreen
-import com.example.trytolie.ui.pages.profile.ProfileScreenGuest
+import com.example.trytolie.ui.pages.authenticated.HomePage
+import com.example.trytolie.ui.pages.authenticated.MatchHistory
+import com.example.trytolie.ui.pages.authenticated.ProfileScreen
+import com.example.trytolie.ui.pages.game.FindGameScreen
+import com.example.trytolie.ui.pages.guest.HomePageGuest
+import com.example.trytolie.ui.pages.guest.ProfileScreenGuest
+import com.example.trytolie.ui.pages.unauthenticated.InfoScreen
+import com.example.trytolie.ui.pages.unauthenticated.PasswordResetScreen
+import com.example.trytolie.ui.pages.unauthenticated.SignInScreen
+import com.example.trytolie.ui.pages.unauthenticated.SignUpScreen
 import com.example.trytolie.ui.utils.DevicePosture
 import com.example.trytolie.ui.utils.TryToLieNavigationContentPosition
 import com.example.trytolie.ui.utils.TryToLieNavigationType
@@ -128,6 +147,7 @@ fun TryToLieApp(
             gameViewModel = gameViewModel!!,
             roomUIClient = roomUIClient!!,
             roomViewModel = roomViewModel!!,
+            authViewModel = authViewModel,
             userData = userData!!
         )
         TryToLieRoute.ONLINE_GAME -> Surface(color = MaterialTheme.colorScheme.background) {
@@ -307,8 +327,18 @@ private fun TryToLieNavHost(
                     gameUIClient = gameUIClient!!
                 )
             }
+            composable(TryToLieRoute.HISTORY) {
+                MatchHistory(
+                    gameUIClient = gameUIClient!!,
+                    authViewModel = authViewModel
+                )
+            }
             composable(TryToLieRoute.PROFILE) {
-                /*ProfileScreen()*/
+                ProfileScreen(
+                    modifier= modifier,
+                    authHandler = authHandler,
+                    authViewModel = authViewModel
+                )
             }
         }
     } else if (authViewModel?.isGuest() != true) {
@@ -358,12 +388,44 @@ private fun TryToLieNavHost(
             startDestination = TryToLieRoute.HOME,
         ) {
             composable(TryToLieRoute.HOME) {
-                HomePage(
+                HomePageGuest(
                     modifier = modifier,
                     roomViewModel = roomViewModel!!,
                     roomUIClient = roomUIClient!!,
                     gameUIClient = gameUIClient!!
                 )
+            }
+            composable(TryToLieRoute.HISTORY) {
+                Column(
+                    modifier = modifier
+                        .fillMaxSize()
+                        .padding(top = 16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = "You must be registered to see the match history",
+                        style = MaterialTheme.typography.bodySmall,
+                        textAlign = TextAlign.Center,
+                        color = MaterialTheme.colorScheme.outline,
+                        fontSize = 15.sp
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Button(
+                        colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary),
+                        onClick = {
+                            authViewModel.signOutFromGuest()
+                        }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ExitToApp,
+                            modifier = Modifier.size(16.dp),
+                            contentDescription = "Exit icon",
+                            tint = MaterialTheme.colorScheme.onPrimary
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(text = "Back to Login", color = MaterialTheme.colorScheme.onPrimary)
+                    }
+                }
             }
             composable(TryToLieRoute.PROFILE) {
                 ProfileScreenGuest(

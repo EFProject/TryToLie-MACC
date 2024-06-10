@@ -116,6 +116,24 @@ class GameUIClient(
         }
     }
 
+    suspend fun getAllGames(userId: String): List<GameData>? {
+        return try {
+            var gamesList = emptyList<GameData>()
+            val gameResponse = gameRemoteService.getAll(token = token, id = userId)
+            val responseBody = gameResponse.body()
+            if (gameResponse.isSuccessful) {
+                val gameDataResponse: GamesList = Gson().fromJson(responseBody, GamesList::class.java)
+                gamesList = gameDataResponse.games
+            }
+            Log.d("Game Client",responseBody.toString())
+            return gamesList
+        } catch(e: Exception) {
+            e.printStackTrace()
+            if(e is CancellationException) throw e
+            null
+        }
+    }
+
     suspend fun createGame(roomData: RoomData): Boolean {
         return try {
             val gameResponse = gameRemoteService.create(token = token, id = roomData.roomId)

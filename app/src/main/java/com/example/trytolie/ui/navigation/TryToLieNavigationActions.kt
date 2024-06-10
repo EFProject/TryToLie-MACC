@@ -4,10 +4,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Login
 import androidx.compose.material.icons.automirrored.outlined.Login
 import androidx.compose.material.icons.filled.AppRegistration
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.outlined.AppRegistration
+import androidx.compose.material.icons.outlined.History
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Person
@@ -19,6 +21,7 @@ import com.example.trytolie.R
 
 object TryToLieRoute {
     const val HOME = "Home"
+    const val HISTORY = "Match History"
     const val PROFILE = "Profile"
     const val SIGN_IN = "Sign In"
     const val SIGN_UP = "Sign Up"
@@ -53,6 +56,12 @@ val TOP_LEVEL_DESTINATIONS = listOf(
         selectedIcon = Icons.Default.Home,
         unselectedIcon = Icons.Outlined.Home,
         iconTextId = R.string.tab_home
+    ),
+    TryToLieTopLevelDestination(
+        route = TryToLieRoute.HISTORY,
+        selectedIcon = Icons.Default.History,
+        unselectedIcon = Icons.Outlined.History,
+        iconTextId = R.string.tab_history
     ),
     TryToLieTopLevelDestination(
         route = TryToLieRoute.PROFILE,

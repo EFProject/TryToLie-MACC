@@ -1,4 +1,4 @@
-package com.example.trytolie.ui.pages
+package com.example.trytolie.ui.pages.unauthenticated
 
 import android.content.Context
 import android.widget.Toast

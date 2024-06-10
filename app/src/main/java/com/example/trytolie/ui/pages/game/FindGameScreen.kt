@@ -1,4 +1,4 @@
-package com.example.trytolie.ui.pages.multiplayer
+package com.example.trytolie.ui.pages.game
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -43,7 +43,9 @@ import com.example.trytolie.multiplayer.room.RoomData
 import com.example.trytolie.multiplayer.room.RoomStatus
 import com.example.trytolie.multiplayer.room.RoomUIClient
 import com.example.trytolie.multiplayer.room.RoomViewModel
+import com.example.trytolie.sign_in.SignInViewModel
 import com.example.trytolie.sign_in.UserData
+import com.example.trytolie.ui.components.CardProfile
 import com.example.trytolie.ui.components.CardProfileSearch
 import com.example.trytolie.ui.navigation.TryToLieRoute
 import kotlinx.coroutines.launch
@@ -55,6 +57,7 @@ fun FindGameScreen(
     roomViewModel: RoomViewModel,
     gameUIClient: GameUIClient,
     gameViewModel: GameViewModel,
+    authViewModel: SignInViewModel? = null,
     userData: UserData
 ) {
 
@@ -125,7 +128,10 @@ fun FindGameScreen(
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxWidth()
         ) {
-            CardProfileSearch(userData = userData,modifier=modifier, painter = painter)
+            if(authViewModel?.isGuest() == true)
+                CardProfileSearch(userData = userData,modifier=modifier, painter = painter)
+            else 
+                CardProfile(userData = userData)
         }
         Spacer(modifier = Modifier.height(20.dp))
         when(roomData.roomState) {
