@@ -197,6 +197,7 @@ class AuthUIClient(
     suspend fun getSignedInUser(): UserData? = auth.currentUser?.run {
         try {
             val userResponse =  userRemoteService.get(token = token,id = uid)
+            Log.d("AuthUI Client",userResponse.body().toString())
             if (userResponse.code() == 200) {
                 userResponse.body()
             } else {

@@ -18,7 +18,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -37,9 +42,15 @@ fun ProfileScreen(
     authHandler: AuthUIClient? = null,
     authViewModel: SignInViewModel? = null,
 ) {
-    val userData: UserData? = authViewModel?.getUserData()
+    var userData by remember { mutableStateOf(UserData()) }
     val lifeScope = rememberCoroutineScope()
     val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        lifeScope.launch {
+            userData = authHandler?.getSignedInUser()!!
+        }
+    }
 
 /*
     var painter: AsyncImagePainter = if (userData!!.profilePictureUrl!!.startsWith("http")) {
@@ -58,7 +69,7 @@ fun ProfileScreen(
         CardProfile(userData = userData)
         Spacer(modifier = Modifier.height(16.dp))
 
-        Score(userData = userData!!)
+        Score(userData = userData)
         Spacer(modifier = Modifier.height(16.dp))
 
         Row(
@@ -73,7 +84,7 @@ fun ProfileScreen(
                 onClick = {
                     lifeScope.launch {
                         val signInResult = authHandler?.signOut()
-                        authViewModel.onSignInResult(
+                        authViewModel!!.onSignInResult(
                             signInResult!!,
                             context = context
                         )

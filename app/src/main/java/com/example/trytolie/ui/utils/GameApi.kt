@@ -5,7 +5,6 @@ import com.google.gson.JsonObject
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
-import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
@@ -17,6 +16,9 @@ interface GameAPI {
     @GET("/api/v1/history/{id}")
     suspend fun getAll(@Header("Authorization") token: String, @Path("id") id: String): retrofit2.Response<JsonObject>
 
+    @PUT("/api/v1/history/{id}")
+    suspend fun endGame(@Header("Authorization") token: String, @Path("id") id: String, @Body body: String): retrofit2.Response<JsonObject>
+
     @GET("/api/v1/game/{id}")
     suspend fun get(@Header("Authorization") token: String, @Path("id") id: String): retrofit2.Response<JsonObject>
 
@@ -26,8 +28,6 @@ interface GameAPI {
     @PUT("/api/v1/game/{id}")
     suspend fun update(@Header("Authorization") token: String, @Path("id") id: String, @Body body: String): retrofit2.Response<JsonObject>
 
-    @DELETE("/api/v1/game/{id}")
-    suspend fun delete(@Header("Authorization") token: String, @Path("id") id: String): retrofit2.Response<JsonObject>
 }
 
 

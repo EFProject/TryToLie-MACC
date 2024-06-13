@@ -94,7 +94,7 @@ class GameUIClient(
         }
     }
 
-    private fun stopListeningToGameData() {
+    fun stopListeningToGameData() {
         Log.d("Game Client", "gameDataListener has been closed")
         gameDataListener?.remove()
     }
@@ -153,10 +153,20 @@ class GameUIClient(
     }
 
 
-    fun exitFromGame()  {
-        stopListeningToGameData()
-        // gameRemoteService.delete(token=token, id = model.roomId)
-        gameViewModel.setGameData(GameData())
+    suspend fun exitFromGame(gameId: String, playerId: String)  {
+        try {
+            val data = gson.toJson(playerId)
+            val gameResponse = gameRemoteService.endGame(token = token, id = gameId, body = data)
+            val responseBody = gameResponse.body()
+            if (gameResponse.isSuccessful) {
+                stopListeningToGameData()
+                gameViewModel.setGameData(GameData())
+            }
+            Log.d("Game Client",responseBody.toString())
+        } catch(e: Exception) {
+            e.printStackTrace()
+            if(e is CancellationException) throw e
+        }
     }
 
 }

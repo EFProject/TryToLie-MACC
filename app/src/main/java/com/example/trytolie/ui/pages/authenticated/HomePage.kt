@@ -96,7 +96,7 @@ fun HomePage(
         Button(
             onClick = {
                 lifeScope.launch {
-                    val game = gameUIClient.getGame("game_270a36a841e141898b83")
+                    val game = gameUIClient.getGame("game_f5033831142045df993d")
                     if (game != null) {
                         roomViewModel.setFullViewPage(TryToLieRoute.ONLINE_GAME)
                     } else {

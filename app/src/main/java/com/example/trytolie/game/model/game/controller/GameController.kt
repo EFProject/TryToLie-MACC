@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -46,12 +47,14 @@ import androidx.compose.ui.unit.dp
 import com.example.trytolie.game.model.game.MotionSensitiveButton
 import com.example.trytolie.game.model.game.speechParser.SpeechParser
 import com.example.trytolie.game.ui.app.ButtonSpeechToText
+import com.example.trytolie.multiplayer.game.GameData
 import com.example.trytolie.multiplayer.game.GameStatus
 import com.example.trytolie.multiplayer.game.GameUIClient
 import com.example.trytolie.multiplayer.game.GameViewModel
 import com.example.trytolie.multiplayer.room.RoomViewModel
 import com.example.trytolie.sign_in.UserData
 import com.example.trytolie.ui.components.DiceRender
+import com.example.trytolie.ui.components.DiceRenderDeclaration
 import com.example.trytolie.ui.navigation.TryToLieRoute
 import kotlinx.coroutines.launch
 
@@ -83,7 +86,7 @@ fun GameController(
 
     Column(
         modifier = modifier
-            .fillMaxSize()
+            .fillMaxHeight(0.9f)
             .background(MaterialTheme.colorScheme.inverseOnSurface),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -106,9 +109,11 @@ fun GameController(
 
                 GameStatus.LIAR_PHASE -> {
                     Text(
-                        text = "${gameData.declarationResults[0]} times the value ${gameData.declarationResults[1]}",
+                        text = "Player Declaration: ",
                         modifier = Modifier.padding(16.dp)
                     )
+                    DiceRenderDeclaration(declarationValues = gameData.declarationResults)
+
                     Text(
                         text = "You have $availableDice dice",
                         modifier = Modifier.padding(16.dp)
@@ -197,7 +202,8 @@ fun GameController(
                         }
                         Button(
                             onClick = {
-                                gameUIClient.exitFromGame()
+                                gameUIClient.stopListeningToGameData()
+                                gameViewModel.setGameData(GameData())
                                 roomViewModel.setFullViewPage(TryToLieRoute.HOME)
                             },
                             colors = ButtonDefaults.buttonColors(Color.Red) // Set the background color to red
@@ -260,21 +266,15 @@ fun GameController(
                 GameStatus.DECLARATION_PHASE -> {
                     var declaredValues by remember { mutableStateOf(IntArray(2)) }
                     var textSpoken by remember { mutableStateOf("") }
-                    gameData.diceResults.forEachIndexed { index, diceValue ->
-                        Text(
-                            text = "Dice ${index + 1} Value: $diceValue",
-                            modifier = Modifier.padding(16.dp)
-                        )
-                    }
+
                     DiceRender(diceValues = gameData.diceResults)
 
                     if(gameData.declarationResults.isNotEmpty()){
-                        Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "Previous Declaration: ${gameData.declarationResults[0]} times ${gameData.declarationResults[1]}",
+                            text = "Previous Declaration: ",
                             modifier = Modifier.padding(16.dp)
                         )
-                        Spacer(modifier = Modifier.width(8.dp))
+                        DiceRenderDeclaration(declarationValues = gameData.declarationResults)
                     }
 
                     Button(
@@ -291,7 +291,9 @@ fun GameController(
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(text = "Declare your dice randomly")
                     }
+
                     ButtonSpeechToText(setSpokenText = {textSpoken = it})
+
                     if (textSpoken != "") {
                         val declaration = SpeechParser.parseSpeechToDeclaration(textSpoken)
                         val checkDeclarationOutcome = SpeechParser.checkDeclaration(declaration, availableDice, gameData.declarationResults)
