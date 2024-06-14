@@ -57,6 +57,7 @@ fun GameOrchestrator(
     userData: UserData? = null,
 ) {
     val showOnlineExitDialog = remember { mutableStateOf(false) }
+    val showEndGameDialog = remember { mutableStateOf(false) }
     val gameData = gameViewModel.gameData.collectAsState()
 
     Column(
@@ -74,7 +75,8 @@ fun GameOrchestrator(
             roomViewModel = roomViewModel,
             gameViewModel = gameViewModel,
             gameUIClient = gameUIClient!!,
-            userData = userData!!
+            userData = userData!!,
+            showEndGameDialog = { showEndGameDialog.value = true }
         )
 
         GameControls(
@@ -83,8 +85,10 @@ fun GameOrchestrator(
 
         GameDialogs(
             showOnlineExitDialog = showOnlineExitDialog,
+            showEndGameDialog = showEndGameDialog,
             gameUIClient = gameUIClient,
             roomViewModel = roomViewModel,
+            gameViewModel = gameViewModel,
             authUIClient = authUIClient,
             signInViewModel = signInViewModel,
             gameData = gameData.value,
@@ -133,7 +137,8 @@ private fun GameControls(
             .fillMaxHeight()
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.inverseOnSurface),
-        horizontalArrangement = Arrangement.Center
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Spacer(Modifier.size(4.dp))
         Button(

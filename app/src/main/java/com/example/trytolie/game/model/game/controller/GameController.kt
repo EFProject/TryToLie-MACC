@@ -1,24 +1,28 @@
 package com.example.trytolie.game.model.game.controller
 
-import android.util.Log
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ExitToApp
+import androidx.compose.material.icons.automirrored.filled.Message
 import androidx.compose.material.icons.filled.ArrowCircleRight
 import androidx.compose.material.icons.filled.ChatBubbleOutline
-import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -37,25 +41,22 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import com.example.trytolie.game.model.game.MotionSensitiveButton
 import com.example.trytolie.game.model.game.speechParser.SpeechParser
 import com.example.trytolie.game.ui.app.ButtonSpeechToText
-import com.example.trytolie.multiplayer.game.GameData
 import com.example.trytolie.multiplayer.game.GameStatus
 import com.example.trytolie.multiplayer.game.GameUIClient
 import com.example.trytolie.multiplayer.game.GameViewModel
 import com.example.trytolie.multiplayer.room.RoomViewModel
 import com.example.trytolie.sign_in.UserData
+import com.example.trytolie.ui.components.CurrentPlayerCard
 import com.example.trytolie.ui.components.DiceRender
 import com.example.trytolie.ui.components.DiceRenderDeclaration
-import com.example.trytolie.ui.navigation.TryToLieRoute
 import kotlinx.coroutines.launch
 
 @Composable
@@ -64,7 +65,8 @@ fun GameController(
     roomViewModel: RoomViewModel,
     gameUIClient: GameUIClient,
     gameViewModel: GameViewModel,
-    userData: UserData
+    userData: UserData,
+    showEndGameDialog: () -> Unit,
 ) {
 
     val gameData by gameViewModel.gameData.collectAsState()
@@ -84,21 +86,17 @@ fun GameController(
         }
     }
 
+    CurrentPlayerCard( gameData, userData, modifier )
+
     Column(
         modifier = modifier
-            .fillMaxHeight(0.9f)
+            .fillMaxHeight(0.8f)
+            .fillMaxWidth()
             .background(MaterialTheme.colorScheme.inverseOnSurface),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            //CardProfileSearch(userData = userData, modifier = modifier, painter = painter)
-        }
-        Spacer(modifier = Modifier.height(20.dp))
+
         if(gameData.currentPlayer == userData.id || true){
 
             val availableDice by remember { mutableIntStateOf(
@@ -113,23 +111,22 @@ fun GameController(
                         modifier = Modifier.padding(16.dp)
                     )
                     DiceRenderDeclaration(declarationValues = gameData.declarationResults)
-
-                    Text(
-                        text = "You have $availableDice dice",
-                        modifier = Modifier.padding(16.dp)
-                    )
+                    Spacer(modifier = Modifier.height(28.dp))
                     Button(
                         onClick = {
                             updateDiceResults = true
-                        }) {
+                        },
+                        colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.error)
+                    ) {
                         Icon(
-                            imageVector = Icons.Default.ErrorOutline,
+                            imageVector = Icons.AutoMirrored.Filled.Message,
                             modifier = Modifier.size(16.dp),
                             contentDescription = "ErrorOutline icon"
                         )
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text(text = "LIAR!")
+                        Text(text = "LIAR !")
                     }
+                    Spacer(modifier = Modifier.height(8.dp))
                     var enable = true
                     // use cases when player can't make an higher declaration
                     if(gameData.declarationResults[0] > availableDice) enable= false
@@ -157,7 +154,6 @@ fun GameController(
                         )
                         Surface(
                             modifier = Modifier.padding(16.dp),
-                            // elevation = 4.dp,
                             shape = RoundedCornerShape(8.dp)
                         ) {
                             Text(
@@ -165,8 +161,8 @@ fun GameController(
                                     withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                                         append("Then the current state of play is:\n")
                                     }
-                                    append("Player 1 has ${gameData.playerOneDice} dice\n")
-                                    append("Player 2 has ${gameData.playerTwoDice} dice")
+                                    append("${gameData.playerOneName.split(" ")[0]} has ${gameData.playerOneDice} dice\n")
+                                    append("${gameData.playerTwoName.split(" ")[0]} has ${gameData.playerTwoDice} dice")
                                 },
                                 modifier = Modifier.padding(16.dp),
                                 textAlign = TextAlign.Center
@@ -185,6 +181,7 @@ fun GameController(
                             Text(text = "Keep playing")
                         }
                     } else {
+                        showEndGameDialog()
                         Text(
                             text = msgBE,
                             modifier = Modifier.padding(16.dp)
@@ -200,22 +197,6 @@ fun GameController(
                                 textAlign = TextAlign.Center
                             )
                         }
-                        Button(
-                            onClick = {
-                                gameUIClient.stopListeningToGameData()
-                                gameViewModel.setGameData(GameData())
-                                roomViewModel.setFullViewPage(TryToLieRoute.HOME)
-                            },
-                            colors = ButtonDefaults.buttonColors(Color.Red) // Set the background color to red
-                        ) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ExitToApp, // Use an exit-related icon
-                                modifier = Modifier.size(16.dp),
-                                contentDescription = "Exit icon"
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(text = "Exit")
-                        }
                     }
                 }
 
@@ -230,25 +211,32 @@ fun GameController(
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
+
+                        DiceRenderDeclaration(listOf(availableDice,1))
+
+                        val isVibrating by remember { mutableStateOf(true) }
+                        val infiniteTransition = rememberInfiniteTransition(label = "")
+                        val offsetX by infiniteTransition.animateFloat(
+                            initialValue = 0f,
+                            targetValue = 20f,
+                            animationSpec = infiniteRepeatable(
+                                animation = tween(130, 1000, easing = LinearEasing),
+                                repeatMode = RepeatMode.Reverse
+                            ), label = ""
+                        )
+
                         Surface(
-                            modifier = Modifier.padding(16.dp),
-                            // elevation = 4.dp,
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .offset(x = if (isVibrating) offsetX.dp else 0.dp),
                             shape = RoundedCornerShape(8.dp)
                         ) {
                             Text(
-                                text = "Shake the phone to roll the dice!",
+                                text = "Shake the phone to roll the dice !",
                                 modifier = Modifier.padding(16.dp),
                                 textAlign = TextAlign.Center
                             )
                         }
-                        MotionSensitiveButton(
-                            onClick = {
-                                diceValues = IntArray(availableDice) { (1..6).random() }
-                                gameData.diceResults = diceValues.toList()
-                                updateDiceResults = true
-                                Log.d("MotionSensitiveButton", "Button clicked with motion detected")
-                            }
-                        )
 
                         Button(
                             onClick = {
@@ -258,7 +246,7 @@ fun GameController(
                             },
                             modifier = Modifier.padding(16.dp)
                         ) {
-                            Text(text = "Roll Dice Click")
+                            Text(text = "Roll Dice Button")
                         }
                     }
                 }
@@ -267,6 +255,10 @@ fun GameController(
                     var declaredValues by remember { mutableStateOf(IntArray(2)) }
                     var textSpoken by remember { mutableStateOf("") }
 
+                    Text(
+                        text = "Outcome: ",
+                        modifier = Modifier.padding(16.dp)
+                    )
                     DiceRender(diceValues = gameData.diceResults)
 
                     if(gameData.declarationResults.isNotEmpty()){

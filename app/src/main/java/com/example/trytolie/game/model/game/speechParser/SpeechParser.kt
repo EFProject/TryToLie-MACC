@@ -79,8 +79,8 @@ object SpeechParser{
         if(declarationResults.isNotEmpty()){
             val preOccurrence = declarationResults[0]
             val preValue = declarationResults[1]
-            if(occurrence > preOccurrence &&  value == preValue) return "OK"
-            if(occurrence <= preOccurrence && value > preValue) return "OK"
+            if(occurrence > preOccurrence) return "OK"
+            if(value > preValue) return "OK"
 
         } else return "OK"
 
