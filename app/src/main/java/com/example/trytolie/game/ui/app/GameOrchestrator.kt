@@ -39,21 +39,15 @@ import com.example.trytolie.game.model.game.controller.GameController
 import com.example.trytolie.multiplayer.game.GameData
 import com.example.trytolie.multiplayer.game.GameUIClient
 import com.example.trytolie.multiplayer.game.GameViewModel
-import com.example.trytolie.multiplayer.room.RoomUIClient
 import com.example.trytolie.multiplayer.room.RoomViewModel
-import com.example.trytolie.sign_in.AuthUIClient
-import com.example.trytolie.sign_in.SignInViewModel
 import com.example.trytolie.sign_in.UserData
 import com.google.firebase.firestore.FirebaseFirestore
 
 @Composable
 fun GameOrchestrator(
-    signInViewModel: SignInViewModel?,
     gameViewModel: GameViewModel,
     roomViewModel: RoomViewModel,
     gameUIClient: GameUIClient? = null,
-    roomUIClient: RoomUIClient? = null,
-    authUIClient: AuthUIClient? = null,
     userData: UserData? = null,
 ) {
     val showOnlineExitDialog = remember { mutableStateOf(false) }
@@ -66,13 +60,12 @@ fun GameOrchestrator(
             .background(MaterialTheme.colorScheme.background)
     ) {
 
-        GamePlayers(gameData = gameData.value,userData=userData)
+        GamePlayers(gameData = gameData.value)
 
         Status(gameData = gameData.value)
 
         GameController(
             modifier = Modifier,
-            roomViewModel = roomViewModel,
             gameViewModel = gameViewModel,
             gameUIClient = gameUIClient!!,
             userData = userData!!,
@@ -89,8 +82,6 @@ fun GameOrchestrator(
             gameUIClient = gameUIClient,
             roomViewModel = roomViewModel,
             gameViewModel = gameViewModel,
-            authUIClient = authUIClient,
-            signInViewModel = signInViewModel,
             gameData = gameData.value,
             userData = userData
         )
@@ -210,19 +201,12 @@ fun OnErrorDialog(
 @Composable
 fun GameOrchestratorPreview() {
     GameOrchestrator(
-        roomUIClient = RoomUIClient(
-            context = LocalContext.current,
-            db = FirebaseFirestore.getInstance(),
-            roomViewModel = RoomViewModel(),
-            userData = UserData()
-        ),
         gameUIClient = GameUIClient(
             context = LocalContext.current,
             db = FirebaseFirestore.getInstance(),
             gameViewModel = GameViewModel(),
         ),
         gameViewModel = GameViewModel(),
-        signInViewModel = SignInViewModel(),
         roomViewModel = RoomViewModel(),
     )
 }

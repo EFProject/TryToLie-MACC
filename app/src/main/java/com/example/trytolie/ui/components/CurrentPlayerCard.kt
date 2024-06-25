@@ -39,29 +39,26 @@ fun CurrentPlayerCard(
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondary),
             modifier = modifier.fillMaxWidth(0.6f).padding(10.dp),
         ) {
-            Column(
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 35.dp, vertical = 10.dp),
+                verticalAlignment = Alignment.Top,
+                horizontalArrangement = Arrangement.Center
             ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 35.dp, vertical = 10.dp),
-                    verticalAlignment = Alignment.Top,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    val text = when (userData.id) {
-                        gameData.currentPlayer -> " It's your turn !"
-                        gameData.playerOneId -> gameData.playerTwoName.split(" ")[0] + " is playing ..."
-                        else -> gameData.playerOneName.split(" ")[0] + " is playing ..."
-                    }
-
-                    Text(
-                        text = text,
-                        fontWeight = FontWeight.Medium,
-                        fontSize = 15.sp,
-                        color = MaterialTheme.colorScheme.onSecondary,
-                        textAlign = TextAlign.Center,
-                    )
+                val text = when (userData.id) {
+                    gameData.currentPlayer -> " It's your turn !"
+                    gameData.playerOneId -> gameData.playerTwoName.split(" ")[0] + " is playing ..."
+                    else -> gameData.playerOneName.split(" ")[0] + " is playing ..."
                 }
+
+                Text(
+                    text = text,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 15.sp,
+                    color = MaterialTheme.colorScheme.onSecondary,
+                    textAlign = TextAlign.Center,
+                )
             }
         }
     }
@@ -71,13 +68,19 @@ fun CurrentPlayerCard(
 @Preview
 @Composable
 fun CurrentPlayerCardPreview() {
-/*    val userData = UserData(
+    val gameData = GameData(
+        playerOneId = "",
+        playerOneName = "Player1",
+        playerTwoId = "",
+        playerTwoName = "Player2",
+    )
+    val userData = UserData(
         id = "1",
         name = "Username",
-        email = "eugenio.facciolo00@gmail.com",
+        email = "username@gmail.com",
         emailVerified = false,
-        provider = null
-    )*/
+        provider = "google"
+    )
 
-    //CurrentPlayerCard(gameData, userData, modifier)
+    CurrentPlayerCard(gameData, userData, modifier= Modifier)
 }

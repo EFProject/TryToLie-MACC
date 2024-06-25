@@ -5,40 +5,26 @@
     <string name="tab_history">Match History</string>
     <string name="tab_sign_in">Sign In</string>
     <string name="tab_sign_up">Sign Up</string>
-    <string name="tab_settings">Settings</string>
     <string name="tab_info">More Info</string>
 
     <string name="profile">Profile</string>
-    <string name="search">Search</string>
-    <string name="edit">Edit</string>
-    <string name="compose">Compose</string>
 
     <string name="resume_game">No game in progress!</string>
 
     <string name="password_reset_title">Password Reset</string>
     <string name="password_reset_subtitle">Enter the email linked to your account and you will receive an email to reset your password</string>
 
-    <string name="empty_screen_title">Screen under construction</string>
-    <string name="empty_screen_text">This screen is still under construction. This is only a sample for previews layouts in Jetpack Compose</string>
-
     <string name="logo">TryToLie Logo</string>
     <string name="confirm">Yes</string>
     <string name="negate">No</string>
-    <string name="back_button">Back</string>
     <string name="exit_button">Exit application</string>
     <string name="exit_pop_up_content">Do you want exit TryToLie?</string>
-    <string name="more_options_button">More options</string>
-    <string name="no_item_found">No item found</string>
 
-    <string name="sign_in_success">Sign In</string>
     <string name="roomDbReference">Rooms</string>
     <string name="gameDbReference">Games</string>
 
-    <string name="TryToLieNone">None</string>
-
     <string name="action_game_menu">Game menu</string>
 
-    <string name="game_new">New</string>
     <string name="game_exit">Exit</string>
 
 </resources>

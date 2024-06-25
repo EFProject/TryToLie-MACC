@@ -1,5 +1,6 @@
 package com.example.trytolie.game.model.game.controller
 
+import android.util.Log
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -22,7 +23,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Message
 import androidx.compose.material.icons.filled.ArrowCircleRight
-import androidx.compose.material.icons.filled.ChatBubbleOutline
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -47,12 +47,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import com.example.trytolie.game.model.game.MotionSensitiveButton
 import com.example.trytolie.game.model.game.speechParser.SpeechParser
 import com.example.trytolie.game.ui.app.ButtonSpeechToText
 import com.example.trytolie.multiplayer.game.GameStatus
 import com.example.trytolie.multiplayer.game.GameUIClient
 import com.example.trytolie.multiplayer.game.GameViewModel
-import com.example.trytolie.multiplayer.room.RoomViewModel
 import com.example.trytolie.sign_in.UserData
 import com.example.trytolie.ui.components.CurrentPlayerCard
 import com.example.trytolie.ui.components.DiceRender
@@ -62,7 +62,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun GameController(
     modifier: Modifier = Modifier,
-    roomViewModel: RoomViewModel,
     gameUIClient: GameUIClient,
     gameViewModel: GameViewModel,
     userData: UserData,
@@ -97,7 +96,7 @@ fun GameController(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        if(gameData.currentPlayer == userData.id || true){
+        if(gameData.currentPlayer == userData.id){
 
             val availableDice by remember { mutableIntStateOf(
                 if(userData.id == gameData.playerOneId) gameData.playerOneDice else gameData.playerTwoDice
@@ -237,6 +236,14 @@ fun GameController(
                                 textAlign = TextAlign.Center
                             )
                         }
+                        MotionSensitiveButton(
+                            onClick = {
+                                diceValues = IntArray(availableDice) { (1..6).random() }
+                                gameData.diceResults = diceValues.toList()
+                                updateDiceResults = true
+                                Log.d("MotionSensitiveButton", "Button clicked with motion detected")
+                            }
+                        )
 
                         Button(
                             onClick = {
@@ -269,21 +276,6 @@ fun GameController(
                         DiceRenderDeclaration(declarationValues = gameData.declarationResults)
                     }
 
-                    Button(
-                        onClick = {
-                            declaredValues = IntArray(2) { (1..6).random() }
-                            gameData.declarationResults = declaredValues.toList()
-                            updateDiceResults = true
-                        }) {
-                        Icon(
-                            imageVector = Icons.Default.ChatBubbleOutline,
-                            modifier = Modifier.size(16.dp),
-                            contentDescription = "ChatBubbleOutline icon"
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(text = "Declare your dice randomly")
-                    }
-
                     ButtonSpeechToText(setSpokenText = {textSpoken = it})
 
                     if (textSpoken != "") {
@@ -313,10 +305,8 @@ fun GameController(
                 }
             }
         } else {
-            val loadingText = "Wait your turn..."
-
             Text(
-                text = loadingText,
+                text = "Wait your turn...",
                 style = MaterialTheme.typography.bodyLarge,
                 textAlign = TextAlign.Center,
                 color = MaterialTheme.colorScheme.primary

@@ -30,8 +30,6 @@ import com.example.trytolie.multiplayer.game.GameData
 import com.example.trytolie.multiplayer.game.GameUIClient
 import com.example.trytolie.multiplayer.game.GameViewModel
 import com.example.trytolie.multiplayer.room.RoomViewModel
-import com.example.trytolie.sign_in.AuthUIClient
-import com.example.trytolie.sign_in.SignInViewModel
 import com.example.trytolie.sign_in.UserData
 import com.example.trytolie.ui.navigation.TryToLieRoute
 import kotlinx.coroutines.launch
@@ -43,8 +41,6 @@ fun GameDialogs(
     gameUIClient: GameUIClient? = null,
     roomViewModel: RoomViewModel,
     gameViewModel: GameViewModel,
-    authUIClient: AuthUIClient? = null,
-    signInViewModel: SignInViewModel? = null,
     gameData: GameData? = null,
     userData: UserData? = null
 ) {

@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -24,7 +23,6 @@ import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
-import androidx.compose.material3.PermanentDrawerSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -167,95 +165,6 @@ fun TryToLieBottomNavigationBar(
     }
 }
 
-@Composable
-fun PermanentNavigationDrawerContent(
-    selectedDestination: String,
-    navigationContentPosition: TryToLieNavigationContentPosition,
-    navigateToTopLevelDestination: (TryToLieTopLevelDestination) -> Unit,
-    isAuthenticate: Boolean
-) {
-    PermanentDrawerSheet(modifier = Modifier.sizeIn(minWidth = 200.dp, maxWidth = 300.dp)) {
-        Layout(
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.inverseOnSurface)
-                .padding(16.dp),
-            content = {
-                Column(
-                    modifier = Modifier.layoutId(LayoutType.HEADER),
-                    horizontalAlignment = Alignment.Start,
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    Text(
-                        modifier = Modifier
-                            .padding(16.dp),
-                        text = stringResource(id = R.string.app_name).uppercase(),
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                }
-                Column(
-                    modifier = Modifier
-                        .layoutId(LayoutType.CONTENT)
-                        .verticalScroll(rememberScrollState()),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    if (isAuthenticate) {
-                        TOP_LEVEL_DESTINATIONS.forEach { tryToLieDestination ->
-                            val selected = selectedDestination == tryToLieDestination.route
-                            NavigationDrawerItem(
-                                selected = selected,
-                                label = {
-                                    Text(
-                                        text = stringResource(id = tryToLieDestination.iconTextId),
-                                        modifier = Modifier.padding(horizontal = 16.dp)
-                                    )
-                                },
-                                icon = {
-                                    Icon(
-                                        imageVector = if(selected) tryToLieDestination.selectedIcon else tryToLieDestination.unselectedIcon,
-                                        contentDescription = stringResource(
-                                            id = tryToLieDestination.iconTextId
-                                        )
-                                    )
-                                },
-                                colors = NavigationDrawerItemDefaults.colors(
-                                    unselectedContainerColor = Color.Transparent
-                                ),
-                                onClick = { navigateToTopLevelDestination(tryToLieDestination) }
-                            )
-                        }
-                    } else {
-                        LOGIN_LEVEL_DESTINATIONS.forEach { tryToLieDestination ->
-                            val selected = selectedDestination == tryToLieDestination.route
-                            NavigationDrawerItem(
-                                selected = selected,
-                                label = {
-                                    Text(
-                                        text = stringResource(id = tryToLieDestination.iconTextId),
-                                        modifier = Modifier.padding(horizontal = 16.dp)
-                                    )
-                                },
-                                icon = {
-                                    Icon(
-                                        imageVector = if(selected) tryToLieDestination.selectedIcon else tryToLieDestination.unselectedIcon,
-                                        contentDescription = stringResource(
-                                            id = tryToLieDestination.iconTextId
-                                        )
-                                    )
-                                },
-                                colors = NavigationDrawerItemDefaults.colors(
-                                    unselectedContainerColor = Color.Transparent
-                                ),
-                                onClick = { navigateToTopLevelDestination(tryToLieDestination) }
-                            )
-                        }
-                    }
-                }
-            },
-            measurePolicy = navigationMeasurePolicy(navigationContentPosition)
-        )
-    }
-}
 
 @Composable
 fun ModalNavigationDrawerContent(

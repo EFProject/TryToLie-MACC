@@ -33,19 +33,19 @@ import androidx.compose.ui.unit.dp
 import com.example.trytolie.R
 import com.example.trytolie.multiplayer.game.GameUIClient
 import com.example.trytolie.multiplayer.game.GameViewModel
-import com.example.trytolie.multiplayer.room.RoomUIClient
 import com.example.trytolie.multiplayer.room.RoomViewModel
-import com.example.trytolie.sign_in.UserData
+import com.example.trytolie.sign_in.SignInViewModel
 import com.example.trytolie.ui.navigation.TryToLieRoute
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.gson.JsonObject
 import kotlinx.coroutines.launch
 
 @Composable
 
 fun HomePage(
     modifier: Modifier = Modifier,
+    authViewModel: SignInViewModel? = null,
     roomViewModel: RoomViewModel,
-    roomUIClient: RoomUIClient,
     gameUIClient: GameUIClient,
 ) {
     val scroll = rememberScrollState(0)
@@ -96,10 +96,19 @@ fun HomePage(
         Button(
             onClick = {
                 lifeScope.launch {
-                    val game = gameUIClient.getGame("game_f5033831142045df993d")
-                    if (game != null) {
-                        roomViewModel.setFullViewPage(TryToLieRoute.ONLINE_GAME)
-                    } else {
+                    val userData = authViewModel?.getUserData()
+                    val gamesList = gameUIClient.getAllGames(userData!!.id)
+                    var gameResume: JsonObject? = null
+                    for (game in gamesList!!) {
+                        if(game.winner == ""){
+                            gameResume = gameUIClient.getGame(game.gameId)
+                            if (gameResume != null) {
+                                roomViewModel.setFullViewPage(TryToLieRoute.ONLINE_GAME)
+                            }
+                            break
+                        }
+                    }
+                    if (gameResume == null){
                         Toast.makeText(
                             localContext,
                             resumeGameError,
@@ -126,8 +135,7 @@ fun HomePage(
 @Preview
 @Composable
 fun HomePagePreview() {
-    HomePage(roomViewModel = RoomViewModel(), roomUIClient = RoomUIClient(context = LocalContext.current,
-        db = FirebaseFirestore.getInstance(), roomViewModel = RoomViewModel(), userData =  UserData()),
+    HomePage(roomViewModel = RoomViewModel(),
         gameUIClient = GameUIClient(context = LocalContext.current,
         db = FirebaseFirestore.getInstance(), gameViewModel = GameViewModel())
     )

@@ -52,13 +52,6 @@ fun ProfileScreen(
         }
     }
 
-/*
-    var painter: AsyncImagePainter = if (userData!!.profilePictureUrl!!.startsWith("http")) {
-        rememberAsyncImagePainter("${userData!!.profilePictureUrl}")
-    } else {
-        rememberAsyncImagePainter("${UserDataHelper.AVATAR_URL}/${userData.data!!.id}/${userData.data!!.profilePictureUrl}")
-    }*/
-
     Column(
         modifier = modifier
             .fillMaxSize()

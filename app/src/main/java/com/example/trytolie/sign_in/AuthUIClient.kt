@@ -22,10 +22,7 @@ import com.google.gson.Gson
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.tasks.await
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import java.io.File
 import java.util.Date
 
 class AuthUIClient(
@@ -256,7 +253,7 @@ class AuthUIClient(
         return signInViewModel.setUserData(SignInResult(data = userData, errorMessage = null))
     }
 
-    suspend fun confirmEdits(userId: String?, newEmail: String?, newUsername: String?, newAvatarFile: File?, userData: UserData): Boolean {
+    suspend fun confirmEdits(userId: String?, newEmail: String?, newUsername: String?, userData: UserData): Boolean {
         val userDataObject = UserData(
             id = userId.toString(),
             email = newEmail,
@@ -268,13 +265,7 @@ class AuthUIClient(
             val data = gson.toJson(userDataObject)
             val jsonRequestBody = data.toRequestBody("application/json".toMediaTypeOrNull())
 
-            if (newAvatarFile.toString() != "") {
-                val fileRequestBody = newAvatarFile!!.asRequestBody("image/*".toMediaTypeOrNull())
-                val filePart = MultipartBody.Part.createFormData("file", newAvatarFile.name, fileRequestBody)
-                userRemoteService.updateWithAvatar(token=token, id= userId.toString(), body = jsonRequestBody, image= filePart)
-            } else {
-                userRemoteService.update(token=token, id= userId.toString(), body = jsonRequestBody)
-            }
+            userRemoteService.update(token=token, id= userId.toString(), body = jsonRequestBody)
         } catch (e: Exception) {
             e.printStackTrace()
             if (e is CancellationException) throw e
@@ -290,9 +281,5 @@ class AuthUIClient(
             e.printStackTrace()
             if (e is CancellationException) throw e
         }
-    }
-
-    fun getProvider(): String? {
-        return auth.currentUser?.providerData?.get(1)?.providerId
     }
 }

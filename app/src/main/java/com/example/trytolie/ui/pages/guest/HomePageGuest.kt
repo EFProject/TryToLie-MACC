@@ -33,9 +33,7 @@ import androidx.compose.ui.unit.dp
 import com.example.trytolie.R
 import com.example.trytolie.multiplayer.game.GameUIClient
 import com.example.trytolie.multiplayer.game.GameViewModel
-import com.example.trytolie.multiplayer.room.RoomUIClient
 import com.example.trytolie.multiplayer.room.RoomViewModel
-import com.example.trytolie.sign_in.UserData
 import com.example.trytolie.ui.navigation.TryToLieRoute
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
@@ -45,7 +43,6 @@ import kotlinx.coroutines.launch
 fun HomePageGuest(
     modifier: Modifier = Modifier,
     roomViewModel: RoomViewModel,
-    roomUIClient: RoomUIClient,
     gameUIClient: GameUIClient,
 ) {
     val scroll = rememberScrollState(0)
@@ -123,8 +120,7 @@ fun HomePageGuest(
 @Preview
 @Composable
 fun HomePagePreview() {
-    HomePageGuest(roomViewModel = RoomViewModel(), roomUIClient = RoomUIClient(context = LocalContext.current,
-        db = FirebaseFirestore.getInstance(), roomViewModel = RoomViewModel(), userData =  UserData()),
+    HomePageGuest(roomViewModel = RoomViewModel(),
         gameUIClient = GameUIClient(context = LocalContext.current,
         db = FirebaseFirestore.getInstance(), gameViewModel = GameViewModel())
     )

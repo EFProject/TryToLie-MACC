@@ -27,11 +27,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.trytolie.R
-import com.example.trytolie.sign_in.SignInState
 
 @Composable
 fun InfoScreen(
-    state: SignInState? = SignInState(),
     modifier: Modifier = Modifier,
 ) {
     val scroll = rememberScrollState(0)

@@ -38,7 +38,6 @@ import coil.compose.rememberAsyncImagePainter
 import com.example.trytolie.R
 import com.example.trytolie.game.model.game.QrScannerCompose
 import com.example.trytolie.multiplayer.game.GameUIClient
-import com.example.trytolie.multiplayer.game.GameViewModel
 import com.example.trytolie.multiplayer.room.RoomData
 import com.example.trytolie.multiplayer.room.RoomStatus
 import com.example.trytolie.multiplayer.room.RoomUIClient
@@ -56,7 +55,6 @@ fun FindGameScreen(
     roomUIClient: RoomUIClient,
     roomViewModel: RoomViewModel,
     gameUIClient: GameUIClient,
-    gameViewModel: GameViewModel,
     authViewModel: SignInViewModel? = null,
     userData: UserData
 ) {
@@ -81,10 +79,7 @@ fun FindGameScreen(
             }
             creatingGame -> {
                 lifeScope.launch {
-                    val gameCreated = gameUIClient.createGame(roomViewModel.getRoomData())
-                    if (!gameCreated) {
-                        // TODO Error Message
-                    }
+                    gameUIClient.createGame(roomViewModel.getRoomData())
                     creatingGame = false
                 }
             }

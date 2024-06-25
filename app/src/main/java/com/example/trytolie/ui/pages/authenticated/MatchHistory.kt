@@ -124,8 +124,10 @@ fun EmptyMatchList(){
 fun GameRow(game: GameData, userData: UserData) {
     val backgroundColor = if (game.winner == userData.id) {
         MaterialTheme.colorScheme.primary
-    } else {
+    } else if (game.winner != "") {
         MaterialTheme.colorScheme.error
+    } else {
+        MaterialTheme.colorScheme.inversePrimary
     }
 
     Row(
@@ -146,7 +148,7 @@ fun GameRow(game: GameData, userData: UserData) {
         if(game.playerOneId == userData.id) VSTag(playerTwoName = game.playerTwoName)
         else VSTag(playerTwoName = game.playerOneName)
         Spacer(modifier = Modifier.width(24.dp))
-        IconResultGame(game = game, userData = userData)
+        IconResultGame(game = game)
     }
 }
 
@@ -162,6 +164,6 @@ fun VSTag(playerTwoName: String){
 }
 
 @Composable
-fun IconResultGame(game: GameData, userData: UserData){
+fun IconResultGame(game: GameData){
     return Text(text = "${game.playerOneDice}/${game.playerTwoDice}", color = MaterialTheme.colorScheme.onPrimary)
 }

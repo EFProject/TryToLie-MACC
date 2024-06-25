@@ -1,12 +1,10 @@
 # 🎲 TryToLie - MicroService
 <br />
 <br />
-<p align="center">
+<p>
     <img src="app/src/main/assets/trytolie_logo.png" alt="TryToLie Logo" height="500">
-  </a>
-  
-  <h3 align="center"> Project for the course of Mobile Applications and Cloud Computing 2023/2024. </h3>
-</p>
+  <h3> Project for the course of Mobile Applications and Cloud Computing 2023/2024. </h3>
+<p>
 
 
 # 💻 Created and Designed By:

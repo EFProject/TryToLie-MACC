@@ -22,10 +22,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.trytolie.R
 import com.example.trytolie.multiplayer.game.GameData
-import com.example.trytolie.sign_in.UserData
 
 @Composable
-fun GamePlayers(gameData: GameData? = null, userData: UserData? = null) {
+fun GamePlayers(gameData: GameData? = null) {
 
     Row(
         modifier = Modifier
@@ -88,7 +87,7 @@ fun GamePlayers(gameData: GameData? = null, userData: UserData? = null) {
                 horizontalArrangement = Arrangement.Absolute.Right
             ){
                 Text(
-                    text = gameData?.playerTwoName!!.split(" ")[0] ?: "Player 2",
+                    text = gameData?.playerTwoName!!.split(" ")[0],
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
                 Spacer(modifier = Modifier.width(10.dp))

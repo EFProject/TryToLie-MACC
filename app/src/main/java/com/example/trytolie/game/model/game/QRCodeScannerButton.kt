@@ -124,15 +124,7 @@ fun QrScannerCompose(
                     onGalleryCallBackHandler = {
                         launchGallery = it
                     },
-                    onFailure = {
-                        coroutineScope.launch {
-                            if (it.isEmpty()) {
-                                //snackBarHostState.showSnackbar("Invalid qr code")
-                            } else {
-                                //snackBarHostState.showSnackbar(it)
-                            }
-                        }
-                    }
+                    onFailure = {}
                 )
             }
 
