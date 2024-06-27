@@ -67,7 +67,7 @@ fun FindGameScreen(
     var deletingRoom by remember { mutableStateOf(false) }
     var creatingGame by remember { mutableStateOf(false) }
     var settingGame by remember { mutableStateOf(false) }
-    val painter = rememberAsyncImagePainter(R.drawable.trytolie_logo)
+    val painter = rememberAsyncImagePainter(R.drawable.ic_smartlogo_trytolie)
 
     LaunchedEffect(creatingRoom,findingRoom,deletingRoom,creatingGame,settingGame) {
         when {
@@ -118,6 +118,7 @@ fun FindGameScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Spacer(modifier = Modifier.height(10.dp))
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,
@@ -131,6 +132,7 @@ fun FindGameScreen(
         Spacer(modifier = Modifier.height(20.dp))
         when(roomData.roomState) {
             RoomStatus.WAITING -> {
+                Spacer(modifier = Modifier.height(10.dp))
                 Button(
                     onClick = { findingRoom = true }) {
                     Icon(
@@ -201,7 +203,7 @@ fun FindGameScreen(
                 }
             }
             RoomStatus.JOINED -> {
-                val painterTwo = rememberAsyncImagePainter(R.drawable.trytolie_logo)
+                val painterTwo = rememberAsyncImagePainter(R.drawable.ic_smartlogo_trytolie)
                 Text(
                     "VS",
                     style = MaterialTheme.typography.headlineMedium,

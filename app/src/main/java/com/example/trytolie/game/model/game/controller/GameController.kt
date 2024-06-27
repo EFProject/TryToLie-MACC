@@ -7,9 +7,11 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,6 +27,8 @@ import androidx.compose.material.icons.automirrored.filled.Message
 import androidx.compose.material.icons.filled.ArrowCircleRight
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -41,12 +45,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import com.example.trytolie.R
 import com.example.trytolie.game.model.game.MotionSensitiveButton
 import com.example.trytolie.game.model.game.speechParser.SpeechParser
 import com.example.trytolie.game.ui.app.ButtonSpeechToText
@@ -151,22 +155,60 @@ fun GameController(
                             text = msgBE,
                             modifier = Modifier.padding(16.dp)
                         )
-                        Surface(
-                            modifier = Modifier.padding(16.dp),
-                            shape = RoundedCornerShape(8.dp)
+                        Card(
+                            modifier = Modifier
+                                .width(350.dp)
+                                .height(130.dp),
+                            shape = RoundedCornerShape(16.dp),
+                            colors = CardDefaults.cardColors(containerColor = Color.White)
                         ) {
                             Text(
-                                text = buildAnnotatedString {
-                                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                                        append("Then the current state of play is:\n")
-                                    }
-                                    append("${gameData.playerOneName.split(" ")[0]} has ${gameData.playerOneDice} dice\n")
-                                    append("${gameData.playerTwoName.split(" ")[0]} has ${gameData.playerTwoDice} dice")
-                                },
+                                text = "Then the new state of play is:",
                                 modifier = Modifier.padding(16.dp),
+                                fontWeight = FontWeight.Bold,
                                 textAlign = TextAlign.Center
                             )
+                            Row(
+                                modifier = Modifier.fillMaxWidth().height(35.dp),
+                                horizontalArrangement = Arrangement.Center,
+                                verticalAlignment = Alignment.Top
+                            ){
+                                Text(
+                                    text = gameData.playerOneName.split(" ")[0],
+                                    modifier = Modifier.size(70.dp),
+                                    textAlign = TextAlign.Center
+                                )
+                                Spacer(modifier = Modifier.width(10.dp))
+                                repeat(gameData.playerOneDice) {
+                                    Image(
+                                        painter = painterResource(id = R.drawable.dice_6),
+                                        contentDescription = "Dice available",
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                }
+                            }
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.Center,
+                                verticalAlignment = Alignment.Top
+                            ){
+                                Text(
+                                    text = gameData.playerTwoName.split(" ")[0],
+                                    modifier = Modifier.size(70.dp),
+                                    textAlign = TextAlign.Center
+                                )
+                                Spacer(modifier = Modifier.width(10.dp))
+                                repeat(gameData.playerTwoDice) {
+                                    Image(
+                                        painter = painterResource(id = R.drawable.dice_6),
+                                        contentDescription = "Dice available",
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                }
+                            }
                         }
+                        Spacer(modifier = Modifier.height(28.dp))
+
                         Button(
                             onClick = {
                                 gameUIClient.updateGameState(GameStatus.DICE_PHASE)
@@ -187,7 +229,6 @@ fun GameController(
                         )
                         Surface(
                             modifier = Modifier.padding(16.dp),
-                            // elevation = 4.dp,
                             shape = RoundedCornerShape(8.dp)
                         ) {
                             Text(
@@ -224,6 +265,8 @@ fun GameController(
                             ), label = ""
                         )
 
+                        Spacer(modifier = Modifier.height(28.dp))
+
                         Surface(
                             modifier = Modifier
                                 .padding(16.dp)
@@ -244,6 +287,8 @@ fun GameController(
                                 Log.d("MotionSensitiveButton", "Button clicked with motion detected")
                             }
                         )
+
+                        Spacer(modifier = Modifier.height(28.dp))
 
                         Button(
                             onClick = {
@@ -268,6 +313,8 @@ fun GameController(
                     )
                     DiceRender(diceValues = gameData.diceResults)
 
+                    Spacer(modifier = Modifier.height(28.dp))
+
                     if(gameData.declarationResults.isNotEmpty()){
                         Text(
                             text = "Previous Declaration: ",
@@ -275,19 +322,19 @@ fun GameController(
                         )
                         DiceRenderDeclaration(declarationValues = gameData.declarationResults)
                     }
-
+                    Spacer(modifier = Modifier.height(28.dp))
                     ButtonSpeechToText(setSpokenText = {textSpoken = it})
 
                     if (textSpoken != "") {
                         val declaration = SpeechParser.parseSpeechToDeclaration(textSpoken)
                         val checkDeclarationOutcome = SpeechParser.checkDeclaration(declaration, availableDice, gameData.declarationResults)
-                        Text(
+                      /*Text(
                             modifier = Modifier.padding(top = 8.dp),
                             text = "$textSpoken  $declaration",
                             style = MaterialTheme.typography.bodySmall,
                             textAlign = TextAlign.Center,
                             color = MaterialTheme.colorScheme.secondary
-                        )
+                        )*/
                         Text(
                             modifier = Modifier.padding(top = 8.dp),
                             text = checkDeclarationOutcome,
@@ -305,6 +352,87 @@ fun GameController(
                 }
             }
         } else {
+            when (gameData.gameState) {
+                GameStatus.RESOLVE_PHASE -> {
+                    if(gameData.winner == "") {
+                        Card(
+                            modifier = Modifier
+                                .width(350.dp)
+                                .height(130.dp),
+                            shape = RoundedCornerShape(16.dp),
+                            colors = CardDefaults.cardColors(containerColor = Color.White)
+                        ) {
+                            Text(
+                                text = "Your opponent accused you of being a liar:",
+                                modifier = Modifier.padding(16.dp),
+                                fontWeight = FontWeight.Bold,
+                                textAlign = TextAlign.Center
+                            )
+                            Row(
+                                modifier = Modifier.fillMaxWidth().height(35.dp),
+                                horizontalArrangement = Arrangement.Center,
+                                verticalAlignment = Alignment.Top
+                            ){
+                                Text(
+                                    text = gameData.playerOneName.split(" ")[0],
+                                    modifier = Modifier.size(70.dp),
+                                    textAlign = TextAlign.Center
+                                )
+                                Spacer(modifier = Modifier.width(10.dp))
+                                repeat(gameData.playerOneDice) {
+                                    Image(
+                                        painter = painterResource(id = R.drawable.dice_6),
+                                        contentDescription = "Dice available",
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                }
+                            }
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.Center,
+                                verticalAlignment = Alignment.Top
+                            ){
+                                Text(
+                                    text = gameData.playerTwoName.split(" ")[0],
+                                    modifier = Modifier.size(70.dp),
+                                    textAlign = TextAlign.Center
+                                )
+                                Spacer(modifier = Modifier.width(10.dp))
+                                repeat(gameData.playerTwoDice) {
+                                    Image(
+                                        painter = painterResource(id = R.drawable.dice_6),
+                                        contentDescription = "Dice available",
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                }
+                            }
+                        }
+                    } else {
+                        showEndGameDialog()
+                        Surface(
+                            modifier = Modifier.padding(16.dp),
+                            shape = RoundedCornerShape(8.dp)
+                        ) {
+                            Text(
+                                text = "Player ${gameData.winner} won the game!!",
+                                modifier = Modifier.padding(16.dp),
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                    }
+                }
+
+                GameStatus.LIAR_PHASE -> {
+                    Text(
+                        text = "Your Declaration: ",
+                        modifier = Modifier.padding(16.dp)
+                    )
+                    DiceRenderDeclaration(declarationValues = gameData.declarationResults)
+                }
+                GameStatus.DICE_PHASE -> {}
+                GameStatus.DECLARATION_PHASE -> {}
+            }
+            Spacer(modifier = Modifier.height(48.dp))
             Text(
                 text = "Wait your turn...",
                 style = MaterialTheme.typography.bodyLarge,

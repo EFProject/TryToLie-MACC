@@ -34,14 +34,17 @@ import com.example.trytolie.R
 import com.example.trytolie.multiplayer.game.GameUIClient
 import com.example.trytolie.multiplayer.game.GameViewModel
 import com.example.trytolie.multiplayer.room.RoomViewModel
+import com.example.trytolie.sign_in.SignInViewModel
 import com.example.trytolie.ui.navigation.TryToLieRoute
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.gson.JsonObject
 import kotlinx.coroutines.launch
 
 @Composable
 
 fun HomePageGuest(
     modifier: Modifier = Modifier,
+    authViewModel: SignInViewModel? = null,
     roomViewModel: RoomViewModel,
     gameUIClient: GameUIClient,
 ) {
@@ -55,11 +58,11 @@ fun HomePageGuest(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
-            painter = painterResource(id = R.drawable.trytolie_logo),
+            painter = painterResource(id = R.drawable.ic_smartlogo_trytolie_noborder),
             contentDescription = stringResource(id = R.string.logo),
-            modifier = Modifier.size(200.dp),
+            modifier = Modifier.size(250.dp),
         )
-        Spacer(modifier = Modifier.height(16.dp))
+
         Text(
             modifier = Modifier.padding(12.dp),
             text = stringResource(id = R.string.app_name),
@@ -90,10 +93,19 @@ fun HomePageGuest(
         Button(
             onClick = {
                 lifeScope.launch {
-                    val game = gameUIClient.getGame("game_270a36a841e141898b83")
-                    if (game != null) {
-                        roomViewModel.setFullViewPage(TryToLieRoute.ONLINE_GAME)
-                    } else {
+                    val userData = authViewModel?.getUserData()
+                    val gamesList = gameUIClient.getAllGames(userData!!.id)
+                    var gameResume: JsonObject? = null
+                    for (game in gamesList!!) {
+                        if(game.winner == ""){
+                            gameResume = gameUIClient.getGame(game.gameId)
+                            if (gameResume != null) {
+                                roomViewModel.setFullViewPage(TryToLieRoute.ONLINE_GAME)
+                            }
+                            break
+                        }
+                    }
+                    if (gameResume == null){
                         Toast.makeText(
                             localContext,
                             resumeGameError,

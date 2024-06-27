@@ -196,7 +196,7 @@ class CubeOpenGL(context: Context ){
         // Generate texture ids and load textures for each face
         GLES30.glGenTextures(6, textureIds, 0)
 
-        val resourceId = R.drawable.trytolie_logo
+        val resourceId = R.drawable.ic_smartlogo_trytolie
         val textureBitmap = BitmapFactory.decodeResource(context.resources, resourceId)
             ?: // Handle the case where loading the texture failed
             throw RuntimeException("Failed to load texture from resource: $resourceId")

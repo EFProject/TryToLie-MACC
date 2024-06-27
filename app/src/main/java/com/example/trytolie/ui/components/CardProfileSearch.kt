@@ -86,6 +86,6 @@ fun CardProfileSearchPreview() {
         emailVerified = false,
         provider = null
     )
-    val painter = rememberAsyncImagePainter(R.drawable.trytolie_logo)
+    val painter = rememberAsyncImagePainter(R.drawable.ic_smartlogo_trytolie)
     CardProfileSearch(userData, painter = painter)
 }

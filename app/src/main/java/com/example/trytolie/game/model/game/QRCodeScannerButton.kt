@@ -50,17 +50,6 @@ fun QrScannerCompose(
     var launchGallery by remember { mutableStateOf(value = false) }
     val coroutineScope = rememberCoroutineScope()
 
-/*    LaunchedEffect(qrCodeURL) {
-        when {
-            qrCodeURL -> {
-                lifeScope.launch {
-                    roomUIClient.findRoom()
-                    qrCodeURL = ""
-                }
-            }
-        }
-    }*/
-
     Button(
         onClick = { startBarCodeScan = true } ) {
         Icon(

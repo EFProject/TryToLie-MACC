@@ -44,13 +44,16 @@ fun InfoScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = stringResource(id = R.string.tab_info),
+            text = "TryToLie Mobile App",
             style = MaterialTheme.typography.titleLarge,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.primary
         )
-
-        Spacer(modifier = Modifier.height(60.dp))
+        Image(
+            painter = painterResource(id = R.drawable.ic_smartlogo_trytolie_noborder),
+            contentDescription = stringResource(id = R.string.logo),
+            modifier = Modifier.size(200.dp),
+        )
 
         Text(
             text = "Developed by Eugenio Facciolo",

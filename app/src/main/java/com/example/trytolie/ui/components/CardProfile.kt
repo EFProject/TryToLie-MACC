@@ -37,7 +37,7 @@ import com.example.trytolie.sign_in.UserData
 fun CardProfile(
     userData: UserData?
 ){
-    val painter = rememberAsyncImagePainter(R.drawable.trytolie_logo)
+    val painter = rememberAsyncImagePainter(R.drawable.ic_smartlogo_trytolie)
 
     ElevatedCard(
         elevation = CardDefaults.cardElevation(
@@ -88,7 +88,8 @@ fun CardProfile(
                                 Icon(
                                     imageVector = Icons.Default.Email,
                                     contentDescription = "Email",
-                                    tint = MaterialTheme.colorScheme.inversePrimary
+                                    tint = MaterialTheme.colorScheme.inversePrimary,
+                                    modifier = Modifier.size(24.dp)
                                 )
                             }
                             if(userData.provider == "Google"){
@@ -103,7 +104,7 @@ fun CardProfile(
                     Spacer(modifier = Modifier.height(0.dp))
                     Text(
                         text = userData.email.toString(),
-                        fontSize = 14.sp,
+                        fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.inversePrimary
                     )
                 }
@@ -156,7 +157,7 @@ fun CardProfilePreview() {
     val userData = UserData(
         id = "1",
         name = "Username",
-        email = "eugenio.facciolo00@gmail.com",
+        email = "name.surname00@gmail.com",
         emailVerified = false,
         provider = "Google",
         signupDate = "Thu Jun 06 12:44:53 GMT 2024"

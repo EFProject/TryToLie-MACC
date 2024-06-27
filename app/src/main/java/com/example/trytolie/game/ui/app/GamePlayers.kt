@@ -10,15 +10,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.PermIdentity
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.trytolie.R
 import com.example.trytolie.multiplayer.game.GameData
@@ -42,15 +40,14 @@ fun GamePlayers(gameData: GameData? = null) {
                 verticalAlignment = Alignment.CenterVertically
             ){
                 Spacer(modifier = Modifier.width(15.dp))
-                Icon(
-                    imageVector = Icons.Default.PermIdentity,
-                    contentDescription = "Profile Icon",
-                    modifier = Modifier.size(24.dp),
-                    tint = MaterialTheme.colorScheme.inverseSurface
+                Image(
+                    painter = painterResource(id = R.drawable.ic_smartlogo_trytolie_noborder),
+                    contentDescription = stringResource(id = R.string.logo),
+                    modifier = Modifier.size(30.dp),
                 )
-                Spacer(modifier = Modifier.width(10.dp))
+
                 Text(
-                    text = gameData?.playerOneName ?: "Player 1",
+                    text = gameData?.playerOneName!!.split(" ")[0],
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
             }
@@ -71,13 +68,6 @@ fun GamePlayers(gameData: GameData? = null) {
         }
 
 
-/*        Text(
-            text = "VS",
-            color = MaterialTheme.colorScheme.onPrimaryContainer,
-            textAlign = TextAlign.Center,
-        )*/
-
-
         Column (
             modifier = Modifier.fillMaxWidth()
         ){
@@ -90,12 +80,11 @@ fun GamePlayers(gameData: GameData? = null) {
                     text = gameData?.playerTwoName!!.split(" ")[0],
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
-                Spacer(modifier = Modifier.width(10.dp))
-                Icon(
-                    imageVector = Icons.Default.PermIdentity,
-                    contentDescription = "Profile Icon",
-                    modifier = Modifier.size(24.dp),
-                    tint = MaterialTheme.colorScheme.inverseSurface
+
+                Image(
+                    painter = painterResource(id = R.drawable.ic_smartlogo_trytolie_noborder),
+                    contentDescription = stringResource(id = R.string.logo),
+                    modifier = Modifier.size(30.dp),
                 )
                 Spacer(modifier = Modifier.width(15.dp))
             }

@@ -111,6 +111,12 @@ class RoomUIClient(
             if (roomResponse.isSuccessful) {
                 val roomFreeData = gson.fromJson(responseBody, RoomData::class.java)
                 saveRoomData(roomFreeData)
+            } else {
+                Toast.makeText(
+                    context,
+                    "Could not find a room!",
+                    Toast.LENGTH_LONG
+                ).show()
             }
             Log.d("Room Client",responseBody.toString())
             return roomResponse.body()
@@ -140,6 +146,12 @@ class RoomUIClient(
             if (roomResponse.isSuccessful) {
                 val roomFreeData = gson.fromJson(responseBody, RoomData::class.java)
                 saveRoomData(roomFreeData)
+            } else {
+                Toast.makeText(
+                    context,
+                    "Could not create a room!",
+                    Toast.LENGTH_LONG
+                ).show()
             }
             Log.d("Room Client",responseBody.toString())
             return roomResponse.body()

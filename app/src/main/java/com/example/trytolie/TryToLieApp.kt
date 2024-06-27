@@ -379,6 +379,7 @@ private fun TryToLieNavHost(
             composable(TryToLieRoute.HOME) {
                 HomePageGuest(
                     modifier = modifier,
+                    authViewModel = authViewModel,
                     roomViewModel = roomViewModel!!,
                     gameUIClient = gameUIClient!!
                 )
