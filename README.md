@@ -17,4 +17,4 @@ The flask micro-service can be reached here <a href="https://github.com/EFProjec
 
 ## 📖 Presentation
 
-The report can be reached through this <a href="https://docs.google.com/presentation">Link</a>
+The report can be reached through this <a href="[https://docs.google.com/presentation](https://docs.google.com/presentation/d/e/2PACX-1vQlZZHmjVoobGvMlqHm1nzgkaO-f30Fcq8OG2odYMNcmDIqR62MzOCIX12LT9IWgg/pub?start=false&loop=false&delayms=3000)">Link</a>
