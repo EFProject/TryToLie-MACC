@@ -58,9 +58,9 @@ fun HomePage(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
-            painter = painterResource(id = R.drawable.ic_smartlogo_trytolie_noborder),
+            painter = painterResource(id = R.drawable.ic_smartlogo_trytolie_noborder_small),
             contentDescription = stringResource(id = R.string.logo),
-            modifier = Modifier.size(250.dp),
+            modifier = Modifier.size(150.dp),
         )
 
         Text(

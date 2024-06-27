@@ -49,11 +49,13 @@ fun InfoScreen(
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.primary
         )
+        Spacer(modifier = Modifier.height(20.dp))
         Image(
-            painter = painterResource(id = R.drawable.ic_smartlogo_trytolie_noborder),
+            painter = painterResource(id = R.drawable.ic_smartlogo_trytolie_noborder_small),
             contentDescription = stringResource(id = R.string.logo),
-            modifier = Modifier.size(200.dp),
+            modifier = Modifier.size(150.dp),
         )
+        Spacer(modifier = Modifier.height(20.dp))
 
         Text(
             text = "Developed by Eugenio Facciolo",

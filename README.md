@@ -1,4 +1,4 @@
-# 🎲 TryToLie - MicroService
+# 🎲 TryToLie - Mobile Application
 <br />
 <br />
 <p align="center">
