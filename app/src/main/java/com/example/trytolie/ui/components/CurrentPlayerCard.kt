@@ -42,7 +42,7 @@ fun CurrentPlayerCard(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 35.dp, vertical = 10.dp),
+                    .padding(vertical = 10.dp),
                 verticalAlignment = Alignment.Top,
                 horizontalArrangement = Arrangement.Center
             ) {

@@ -60,7 +60,7 @@ fun HomePage(
         Image(
             painter = painterResource(id = R.drawable.ic_smartlogo_trytolie_noborder_small),
             contentDescription = stringResource(id = R.string.logo),
-            modifier = Modifier.size(150.dp),
+            modifier = Modifier.size(250.dp),
         )
 
         Text(
@@ -70,7 +70,7 @@ fun HomePage(
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.primary
         )
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(36.dp))
 
         Button(
             onClick = {

@@ -125,7 +125,7 @@ fun FindGameScreen(
             modifier = Modifier.fillMaxWidth()
         ) {
             if(authViewModel?.isGuest() == true)
-                CardProfileSearch(userData = userData,modifier=modifier, painter = painter)
+                CardProfileSearch(userData = userData, painter = painter)
             else 
                 CardProfile(userData = userData)
         }
@@ -210,7 +210,7 @@ fun FindGameScreen(
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Spacer(modifier = Modifier.height(20.dp))
-                CardProfileSearch(userData = UserData(name = if(userData.id == roomData.playerOneId) roomData.playerTwoName else roomData.playerOneName), modifier = modifier, painter = painterTwo)
+                CardProfileSearch(userData = UserData(name = if(userData.id == roomData.playerOneId) roomData.playerTwoName else roomData.playerOneName), painter = painterTwo)
                 Spacer(modifier = Modifier.height(20.dp))
                 if(hostingRoom){
                     Button(

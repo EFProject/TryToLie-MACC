@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
@@ -24,7 +25,6 @@ import com.example.trytolie.sign_in.UserData
 @Composable
 fun CardProfileSearch(
     userData: UserData,
-    modifier : Modifier = Modifier,
     painter: AsyncImagePainter){
     ElevatedCard(
         elevation = CardDefaults.cardElevation(
@@ -33,18 +33,19 @@ fun CardProfileSearch(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.secondary,
         ),
-        modifier = modifier.fillMaxWidth(0.8f).padding(10.dp)
+        modifier = Modifier
+            .size(width = 300.dp, height = 120.dp)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth(1f)
-                .padding(horizontal = 20.dp, vertical = 10.dp),
+                .padding(start = 8.dp, top = 8.dp, end = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start
         ) {
             Column(
-                modifier = Modifier.padding(end=8.dp),
-                horizontalAlignment = Alignment.Start,
+                modifier = Modifier.padding(end=8.dp, top = 8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
             ){
                 ProfileImage(painter = painter)

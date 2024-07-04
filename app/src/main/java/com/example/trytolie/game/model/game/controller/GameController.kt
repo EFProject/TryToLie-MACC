@@ -175,7 +175,7 @@ fun GameController(
                             ){
                                 Text(
                                     text = gameData.playerOneName.split(" ")[0],
-                                    modifier = Modifier.size(70.dp),
+                                    modifier = Modifier.size(90.dp),
                                     textAlign = TextAlign.Center
                                 )
                                 Spacer(modifier = Modifier.width(10.dp))
@@ -194,7 +194,7 @@ fun GameController(
                             ){
                                 Text(
                                     text = gameData.playerTwoName.split(" ")[0],
-                                    modifier = Modifier.size(70.dp),
+                                    modifier = Modifier.size(90.dp),
                                     textAlign = TextAlign.Center
                                 )
                                 Spacer(modifier = Modifier.width(10.dp))
@@ -375,7 +375,7 @@ fun GameController(
                             ){
                                 Text(
                                     text = gameData.playerOneName.split(" ")[0],
-                                    modifier = Modifier.size(70.dp),
+                                    modifier = Modifier.size(90.dp),
                                     textAlign = TextAlign.Center
                                 )
                                 Spacer(modifier = Modifier.width(10.dp))
@@ -394,7 +394,7 @@ fun GameController(
                             ){
                                 Text(
                                     text = gameData.playerTwoName.split(" ")[0],
-                                    modifier = Modifier.size(70.dp),
+                                    modifier = Modifier.size(90.dp),
                                     textAlign = TextAlign.Center
                                 )
                                 Spacer(modifier = Modifier.width(10.dp))
