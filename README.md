@@ -15,6 +15,6 @@ Eugenio Facciolo, matricola: 2065516
 
 The flask micro-service can be reached here <a href="https://github.com/EFProject/TryToLie-MicroService-MACC">Link</a>
 
-## 📖 Presentation (Work In Progress)
+## 📖 Presentation
 
-The report can be reached through this <a href="https://docs.google.com/presentation/d/e/2PACX-1vSDtCePFS6Vnu143NvybBNO8yVx1favb4A4lZcAZ5tRAiwl2hh1NOBGxQrLPvq7mA/pub?start=false&loop=false&delayms=3000">Link</a>
+The report can be reached through this <a href="https://docs.google.com/presentation/d/e/2PACX-1vSwfxxyG8AiXtG-MVAheYwsmTpAiRQ-IxRxJf12hVNIHw2TC-TfoeyJ00eu-q548Q/pub?start=false&loop=false&delayms=3000">Link</a>
