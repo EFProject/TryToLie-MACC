@@ -2,7 +2,7 @@
 <br />
 <br />
 <p align="center">
-    <img src="app/src/main/assets/logo_trytolie.png" alt="TryToLie Logo" height="250">
+    <img src="app/src/main/assets/logo_trytolie.png" alt="TryToLie Logo" height="150">
   <h3 align="center"> Project for the course of Mobile Applications and Cloud Computing 2023/2024. </h3>
 <p>
 
@@ -17,4 +17,4 @@ The flask micro-service can be reached here <a href="https://github.com/EFProjec
 
 ## 📖 Presentation
 
-The report can be reached through this <a href="https://docs.google.com/presentation">Link</a>
+The report can be reached through this <a href="https://docs.google.com/presentation/d/e/2PACX-1vSwfxxyG8AiXtG-MVAheYwsmTpAiRQ-IxRxJf12hVNIHw2TC-TfoeyJ00eu-q548Q/pub?start=false&loop=false&delayms=3000">Link</a>
